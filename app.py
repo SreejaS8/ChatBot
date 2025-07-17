@@ -1,79 +1,118 @@
 import streamlit as st
 from groq import Groq
 import os
+import time
+from ui import (
+    apply_custom_css, 
+    render_header, 
+    render_chat_history, 
+    render_input_area, 
+    render_sidebar,
+    render_typing_indicator,
+    show_error_message,
+    initialize_session_state
+)
 
 # Page configuration
-favicon_path = "assets/groq_logo.png"
-if os.path.exists(favicon_path):
-    st.set_page_config(page_title="Image Agent+", page_icon=favicon_path, layout="wide")
-else:
-    st.set_page_config(page_title="Image Agent+", page_icon="🤖", layout="wide")
+st.set_page_config(
+    page_title="Groq Chat Assistant",
+    page_icon="🤖",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# Groq API key
-os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
-client = Groq(api_key=os.environ["GROQ_API_KEY"])
+# Load Groq API Key from Streamlit secrets
+try:
+    os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
+    client = Groq(api_key=os.environ["GROQ_API_KEY"])
+except Exception as e:
+    st.error("❌ Failed to load Groq API key. Please check your Streamlit secrets.")
+    st.stop()
 
-# Summarization trigger
-if "start_chat" not in st.session_state:
-    st.session_state.start_chat = False
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-
-# Function to interact with Groq model
 def ask_groq(prompt):
+    """Call Groq model with error handling and typing simulation"""
     try:
+        # Show typing indicator
+        typing_placeholder = st.empty()
+        with typing_placeholder.container():
+            render_typing_indicator()
+        
+        # Simulate thinking time
+        time.sleep(1)
+        
+        # Make API call
         response = client.chat.completions.create(
             model="llama3-8b-8192",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=4096,
+            temperature=0.7,
+            stream=False
         )
+        
+        # Clear typing indicator
+        typing_placeholder.empty()
+        
         return response.choices[0].message.content
+    
     except Exception as e:
-        return f"[Error] {str(e)}"
+        typing_placeholder.empty()
+        return f"I apologize, but I encountered an error: {str(e)}"
 
-# Layout: two columns side by side
-left, right = st.columns([1, 2])
-
-# 🔮 LEFT PANEL — START Button and Branding
-with left:
-    if os.path.exists(favicon_path):
-        st.image(favicon_path, width=80)
-    st.markdown("<h2 style='color:#6C63FF;'>Bot by Sree</h2>", unsafe_allow_html=True)
-    st.markdown("Click below to start summarizing images or chat with your AI agent.")
-    start_btn = st.button("🚀 START SUMMARIZING")
-
-    if start_btn:
-        st.session_state.start_chat = True
-
-# 💬 RIGHT PANEL — Chat Interface (only when activated)
-with right:
-    if st.session_state.start_chat:
-        st.markdown("<h4 style='color:gray;'>New Chat</h4>", unsafe_allow_html=True)
-        st.markdown("<div style='background-color:#F1F0F0;padding:10px;border-radius:10px;margin-bottom:10px'>"
-                    "Hi, I'm your AI agent! Send an image or type a message below.</div>",
-                    unsafe_allow_html=True)
-
-        # Chat input
-        with st.form("chat_form", clear_on_submit=True):
-            col1, col2 = st.columns([6, 1])
-            with col1:
-                user_input = st.text_input("Start typing...")
-            with col2:
-                submitted = st.form_submit_button("Send")
-
-        if submitted and user_input:
+def main():
+    """Main application function"""
+    # Initialize session state
+    initialize_session_state()
+    
+    # Apply custom CSS
+    apply_custom_css()
+    
+    # Render sidebar
+    render_sidebar()
+    
+    # Main content area
+    with st.container():
+        # Render header
+        render_header()
+        
+        # Create main chat area
+        chat_container = st.container()
+        
+        # Render input area
+        user_input, send_button = render_input_area()
+        
+        # Handle form submission
+        if send_button and user_input.strip():
+            # Add user message to chat history
             st.session_state.chat_history.append(("You", user_input))
-            bot_reply = ask_groq(user_input)
+            
+            # Get bot response
+            with chat_container:
+                bot_reply = ask_groq(user_input)
+                
+            # Add bot response to chat history
             st.session_state.chat_history.append(("Bot", bot_reply))
+            
+            # Clear input and rerun to show updated chat
+            st.rerun()
+        
+        # Handle Enter key submission
+        if user_input and not send_button:
+            # This handles the case where user presses Enter in the text input
+            if st.session_state.get("last_input") != user_input:
+                st.session_state.last_input = user_input
+        
+        # Render chat history
+        with chat_container:
+            render_chat_history(st.session_state.chat_history)
+    
+    # Auto-scroll to bottom (JavaScript injection)
+    st.markdown("""
+    <script>
+        setTimeout(function() {
+            window.scrollTo(0, document.body.scrollHeight);
+        }, 100);
+    </script>
+    """, unsafe_allow_html=True)
 
-        # Show chat history
-        for sender, message in st.session_state.chat_history:
-            bubble_color = "#DCF8C6" if sender == "You" else "#F1F0F0"
-            st.markdown(
-                f"<div style='background-color:{bubble_color};padding:10px;border-radius:10px;margin-bottom:5px'>"
-                f"<strong>{sender}:</strong> {message}</div>",
-                unsafe_allow_html=True
-            )
-    else:
-        st.markdown("<div style='text-align:center;color:gray;padding-top:50px;'>"
-                    "<em>Chat will appear here once you press 'START SUMMARIZING'</em></div>",
-                    unsafe_allow_html=True)
+if __name__ == "__main__":
+    main()
