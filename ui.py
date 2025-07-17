@@ -11,7 +11,7 @@ def get_base64_image(image_path):
         return None
 
 def apply_custom_css():
-    bg_image = get_base64_image("assets/background.jpg") or get_base64_image("assets/background.png")
+    bg_image = get_base64_image("./assets/background.jpg") or get_base64_image("./assets/background.png")
     
     background_style = f"""
         background-image: url("data:image/jpeg;base64,{bg_image}");
