@@ -1,3 +1,5 @@
+# app.py
+
 import streamlit as st
 from groq import Groq
 import os
@@ -17,7 +19,7 @@ def ask_groq(prompt):
     except Exception as e:
         return f"[Error] {str(e)}"
 
-# UI setup
+# Page setup
 st.set_page_config(page_title="Groq Chatbot", page_icon="🤖")
 st.title("💬 Chat with LLaMA3 (Groq)")
 st.caption("Powered by Groq + Streamlit")
@@ -26,15 +28,16 @@ st.caption("Powered by Groq + Streamlit")
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [("System", "Hi! I'm your Groq-powered chatbot. Say something!")]
 
-# Input text box
-user_input = st.text_input("You:", key="user_input")
+# Input text box with a form to handle clearing
+with st.form("chat_form", clear_on_submit=True):
+    user_input = st.text_input("You:")
+    submitted = st.form_submit_button("Send")
 
-if user_input:
+if submitted and user_input:
     st.session_state.chat_history.append(("You", user_input))
     bot_reply = ask_groq(user_input)
     st.session_state.chat_history.append(("Bot", bot_reply))
-    st.session_state.user_input = ""
 
-# Chat display
+# Display chat history
 for sender, message in st.session_state.chat_history:
     st.markdown(f"**{sender}:** {message}")
