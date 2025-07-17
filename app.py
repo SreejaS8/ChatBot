@@ -2,52 +2,67 @@
 
 import streamlit as st
 import os
+from datetime import datetime, timedelta
 from groq import Groq
-from ui import apply_custom_css, render_message, initialize_session_state
+from ui import apply_custom_css, render_message
 
-# --- Page setup ---
+# --- Page Setup ---
 st.set_page_config(page_title="Groq Chatbot", layout="centered")
 apply_custom_css()
-initialize_session_state()
 
 # --- Load API Key ---
 try:
     os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
     client = Groq(api_key=os.environ["GROQ_API_KEY"])
-except Exception as e:
-    st.error("🔐 API Key not found in secrets.")
+except:
+    st.error("🔐 API Key not found.")
     st.stop()
 
-# --- Function to get model response ---
-def ask_groq(prompt):
+# --- Initialize Session Memory ---
+if "messages" not in st.session_state:
+    st.session_state.messages = [{"role": "system", "content": "You are a helpful assistant."}]
+    st.session_state.start_time = datetime.now()
+
+# --- Memory Cleanup after 24hrs ---
+if "start_time" in st.session_state:
+    if datetime.now() - st.session_state.start_time > timedelta(hours=24):
+        st.session_state.messages = [{"role": "system", "content": "You are a helpful assistant."}]
+        st.session_state.start_time = datetime.now()
+
+# --- Function to Get Response from Groq ---
+def ask_groq():
     try:
         response = client.chat.completions.create(
             model="llama3-8b-8192",
-            messages=[{"role": "user", "content": prompt}]
+            messages=st.session_state.messages
         )
         return response.choices[0].message.content
     except Exception as e:
         return f"⚠️ Error: {str(e)}"
 
-# --- Main App ---
+# --- Display Chat UI ---
 def main():
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 
-    # Show chat history
-    for sender, message in st.session_state.chat_history:
-        render_message(sender, message)
+    # Display messages
+    for msg in st.session_state.messages[1:]:  # Skip system message
+        role = "You" if msg["role"] == "user" else "Bot"
+        render_message(role, msg["content"])
 
-    # User input form
+    # Chat input
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input("You:", placeholder="Type your message...")
         submitted = st.form_submit_button("Send")
 
-    # On submit
     if submitted and user_input:
-        st.session_state.chat_history.append(("You", user_input))
-        bot_reply = ask_groq(user_input)
-        st.session_state.chat_history.append(("Bot", bot_reply))
-        st.rerun()  # Refresh the app to show the new messages
+        # Add user input to memory
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        
+        # Get bot reply
+        bot_reply = ask_groq()
+        st.session_state.messages.append({"role": "assistant", "content": bot_reply})
+
+        st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
 
