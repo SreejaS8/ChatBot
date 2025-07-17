@@ -3,22 +3,9 @@
 import streamlit as st
 from groq import Groq
 import os
-import time
-from ui import (
-    apply_custom_css,
-    render_header,
-    render_chat_messages,
-    render_input_area,
-    render_typing_indicator,
-    initialize_session_state
-)
+from ui import apply_custom_css, render_message, initialize_session_state
 
-st.set_page_config(
-    page_title="AI Image Summarizer",
-    page_icon="🤖",
-    layout="centered",
-    initial_sidebar_state="collapsed"
-)
+st.set_page_config(page_title="Chat Bot", layout="centered")
 
 try:
     os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
@@ -30,49 +17,34 @@ except:
 def ask_groq(prompt):
     """Get response from Groq"""
     try:
-        typing_placeholder = st.empty()
-        with typing_placeholder.container():
-            render_typing_indicator()
-        
-        time.sleep(1)
-        
         response = client.chat.completions.create(
             model="llama3-8b-8192",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=4096,
-            temperature=0.7
+            messages=[{"role": "user", "content": prompt}]
         )
-        
-        typing_placeholder.empty()
         return response.choices[0].message.content
-    
     except Exception as e:
-        typing_placeholder.empty()
         return f"Error: {str(e)}"
 
 def main():
     initialize_session_state()
     apply_custom_css()
     
-    st.markdown('<div class="main-container">', unsafe_allow_html=True)
+    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
     
-    render_header()
+    # Display chat history
+    for sender, message in st.session_state.chat_history:
+        render_message(sender, message)
     
-    chat_container = st.container()
+    # Input area
+    with st.form("chat_form", clear_on_submit=True):
+        user_input = st.text_input("Type your message:", placeholder="Ask me anything...")
+        submitted = st.form_submit_button("Send")
     
-    user_input, send_button = render_input_area()
-    
-    if send_button and user_input.strip():
+    if submitted and user_input:
         st.session_state.chat_history.append(("You", user_input))
-        
-        with chat_container:
-            bot_reply = ask_groq(user_input)
-            
+        bot_reply = ask_groq(user_input)
         st.session_state.chat_history.append(("Bot", bot_reply))
         st.rerun()
-    
-    with chat_container:
-        render_chat_messages(st.session_state.chat_history)
     
     st.markdown('</div>', unsafe_allow_html=True)
 
