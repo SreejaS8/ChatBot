@@ -4,7 +4,6 @@ import streamlit as st
 import base64
 
 def get_base64_image(image_path):
-    """Convert image to base64 for CSS background"""
     try:
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
@@ -12,98 +11,104 @@ def get_base64_image(image_path):
         return None
 
 def apply_custom_css():
-    """Simple CSS with background image"""
-    
     bg_image = get_base64_image("assets/background.jpg") or get_base64_image("assets/background.png")
     
     background_style = f"""
-        background-image: url('data:image/jpeg;base64,{bg_image}');
+        background-image: url("data:image/jpeg;base64,{bg_image}");
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
         background-attachment: fixed;
+        background-repeat: no-repeat;
     """ if bg_image else """
-        background: #1a1a2e;
+        background: linear-gradient(to bottom right, #1a1a2e, #16213e);
     """
-    
+
     st.markdown(f"""
     <style>
     .stApp {{
         {background_style}
+        animation: fadeIn 1s ease-in-out;
     }}
-    
+
     .stApp::before {{
         content: '';
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.55);
         z-index: -1;
     }}
-    
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
-    header {{visibility: hidden;}}
-    .stDeployButton {{visibility: hidden;}}
-    
+
+    @keyframes floatUp {{
+        0% {{ transform: translateY(20px); opacity: 0; }}
+        100% {{ transform: translateY(0); opacity: 1; }}
+    }}
+
+    @keyframes fadeIn {{
+        from {{ opacity: 0; }}
+        to {{ opacity: 1; }}
+    }}
+
     .chat-container {{
         max-width: 800px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 30px 20px;
     }}
-    
+
     .message {{
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        padding: 15px;
-        border-radius: 10px;
-        margin: 10px 0;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 16px;
+        margin: 12px 0;
+        border-radius: 15px;
+        animation: floatUp 0.5s ease forwards;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        font-size: 16px;
     }}
-    
+
     .user-message {{
-        background: rgba(59, 130, 246, 0.8);
-        margin-left: 20%;
+        background: rgba(59, 130, 246, 0.75);
+        color: #fff;
+        margin-left: auto;
+        max-width: 75%;
     }}
-    
+
     .bot-message {{
         background: rgba(255, 255, 255, 0.1);
-        margin-right: 20%;
+        color: #fff;
+        margin-right: auto;
+        max-width: 75%;
     }}
-    
-    .stTextInput > div > div > input {{
+
+    .stTextInput input {{
         background: rgba(255, 255, 255, 0.1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 25px !important;
         color: white !important;
-        padding: 10px 20px !important;
+        border-radius: 25px;
+        padding: 10px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }}
-    
-    .stTextInput > div > div > input::placeholder {{
-        color: rgba(255, 255, 255, 0.6) !important;
+
+    .stButton button {{
+        background: rgba(59, 130, 246, 0.9);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 10px 24px;
+        font-weight: bold;
     }}
-    
-    .stButton > button {{
-        background: rgba(59, 130, 246, 0.8) !important;
-        border: none !important;
-        border-radius: 25px !important;
-        color: white !important;
-        padding: 10px 20px !important;
+
+    #MainMenu, footer, header, .stDeployButton {{
+        visibility: hidden;
     }}
     </style>
     """, unsafe_allow_html=True)
 
 def render_message(sender, message):
-    """Render a simple message"""
+    """Render chat messages with animation"""
     if sender == "You":
-        st.markdown(f'<div class="message user-message"><strong>You:</strong> {message}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="message user-message"><strong>{sender}:</strong> {message}</div>', unsafe_allow_html=True)
     else:
-        st.markdown(f'<div class="message bot-message"><strong>Bot:</strong> {message}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="message bot-message"><strong>{sender}:</strong> {message}</div>', unsafe_allow_html=True)
 
 def initialize_session_state():
-    """Initialize session state"""
     if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
+        st.session_state.chat_history = [("Bot", "Hi! I'm your AI assistant. Ask me anything ✨")]
