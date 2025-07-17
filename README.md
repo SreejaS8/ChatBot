@@ -9,7 +9,7 @@ Coming Soon! (Deploy to Hugging Face Spaces or Streamlit Cloud)
 ## 📦 Setup Locally
 
 ```bash
-git clone https://github.com/your-username/groq-chatbot.git
+git clone [https://github.com/SreejaS8/ChatBot.git](https://github.com/SreejaS8/ChatBot.git)
 cd groq-chatbot
 pip install -r requirements.txt
 streamlit run app.py
