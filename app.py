@@ -5,9 +5,9 @@ import os
 # Page configuration
 favicon_path = "assets/groq_logo.png"
 if os.path.exists(favicon_path):
-    st.set_page_config(page_title="Bot By Sree", page_icon=favicon_path, layout="wide")
+    st.set_page_config(page_title="Image Agent+", page_icon=favicon_path, layout="wide")
 else:
-    st.set_page_config(page_title="Bot By Sree", page_icon="🤖", layout="wide")
+    st.set_page_config(page_title="Image Agent+", page_icon="🤖", layout="wide")
 
 # Groq API key
 os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
