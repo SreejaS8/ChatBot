@@ -40,12 +40,6 @@ def log_and_upload(role, content, drive_folder_id):
     # Optionally, upload each time or on a schedule/batch
     upload_log_to_drive(log_path, drive_folder_id)
 
-# --- Usage in Your Chatbot ---
-# In your message handling:
-# (set DRIVE_LOG_FOLDER_ID to your created folder's ID)
-log_and_upload("user", user_input, DRIVE_LOG_FOLDER_ID)
-log_and_upload("assistant", bot_reply, DRIVE_LOG_FOLDER_ID)
-
 # --- Load API Key ---
 try:
     os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
@@ -113,16 +107,18 @@ def main():
     st.markdown('</div>', unsafe_allow_html=True)
 
     if submitted and user_input:
-        # Log user message
+        # Log user message (locally and to drive)
         st.session_state.messages.append({"role": "user", "content": user_input})
         log_message("user", user_input)
+        log_and_upload("user", user_input, DRIVE_LOG_FOLDER_ID)
 
-        # Get bot reply and log it
+        # Get bot reply and log it (locally and to drive)
         bot_reply = ask_groq()
         st.session_state.messages.append({"role": "assistant", "content": bot_reply})
         log_message("assistant", bot_reply)
-        st.rerun()
+        log_and_upload("assistant", bot_reply, DRIVE_LOG_FOLDER_ID)
 
+        st.rerun()
 # --- Run ---
 if __name__ == "__main__":
     main()
