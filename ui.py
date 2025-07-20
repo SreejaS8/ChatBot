@@ -1,5 +1,3 @@
-# ui.py
-
 import streamlit as st
 import base64
 
@@ -12,22 +10,24 @@ def get_base64_image(image_path):
 
 def apply_custom_css():
     bg_image = get_base64_image("./assets/background.jpg") or get_base64_image("./assets/background.png")
-    
+
     background_style = f"""
         background-image: url("data:image/jpeg;base64,{bg_image}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
-        background-repeat: no-repeat;
     """ if bg_image else """
         background: linear-gradient(to bottom right, #1a1a2e, #16213e);
     """
 
     st.markdown(f"""
     <style>
-    .stApp {{
+    html, body, .stApp {{
+        height: 100%;
         {background_style}
-        animation: fadeIn 1s ease-in-out;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
     }}
 
     .stApp::before {{
@@ -39,20 +39,11 @@ def apply_custom_css():
         z-index: -1;
     }}
 
-    @keyframes floatUp {{
-        0% {{ transform: translateY(20px); opacity: 0; }}
-        100% {{ transform: translateY(0); opacity: 1; }}
-    }}
-
-    @keyframes fadeIn {{
-        from {{ opacity: 0; }}
-        to {{ opacity: 1; }}
-    }}
-
     .chat-container {{
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 30px 20px;
+        height: calc(100vh - 100px);
+        overflow-y: auto;
+        padding: 20px;
+        margin-bottom: 80px;
     }}
 
     .message {{
@@ -63,20 +54,19 @@ def apply_custom_css():
         backdrop-filter: blur(8px);
         border: 1px solid rgba(255, 255, 255, 0.15);
         font-size: 16px;
+        max-width: 75%;
     }}
 
     .user-message {{
         background: rgba(59, 130, 246, 0.75);
         color: #fff;
         margin-left: auto;
-        max-width: 75%;
     }}
 
     .bot-message {{
         background: rgba(255, 255, 255, 0.1);
         color: #fff;
         margin-right: auto;
-        max-width: 75%;
     }}
 
     .stTextInput input {{
@@ -96,19 +86,31 @@ def apply_custom_css():
         font-weight: bold;
     }}
 
+    .input-bar {{
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 800px;
+        padding: 0 20px;
+        z-index: 10;
+        background: transparent;
+    }}
+
     #MainMenu, footer, header, .stDeployButton {{
         visibility: hidden;
+    }}
+
+    @keyframes floatUp {{
+        0% {{ transform: translateY(20px); opacity: 0; }}
+        100% {{ transform: translateY(0); opacity: 1; }}
     }}
     </style>
     """, unsafe_allow_html=True)
 
 def render_message(sender, message):
-    """Render chat messages with animation"""
     if sender == "You":
         st.markdown(f'<div class="message user-message"><strong>{sender}:</strong> {message}</div>', unsafe_allow_html=True)
     else:
         st.markdown(f'<div class="message bot-message"><strong>{sender}:</strong> {message}</div>', unsafe_allow_html=True)
-
-def initialize_session_state():
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = [("Bot", "Hi! I'm your AI assistant. Ask me anything ✨")]
