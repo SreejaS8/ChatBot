@@ -7,6 +7,9 @@ import json
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 
+# ===== SET THE DRIVE FOLDER ID HERE =====
+DRIVE_LOG_FOLDER_ID = st.secrets["DRIVE_LOG_FOLDER_ID"]
+
 # --- Page Setup ---
 st.set_page_config(page_title="Groq Chatbot", layout="centered")
 apply_custom_css()
@@ -93,7 +96,6 @@ def ask_groq():
 # --- Display Chat UI ---
 def main():
     # Scrollable chat area
-    DRIVE_LOG_FOLDER_ID = st.secrets["DRIVE_LOG_FOLDER_ID"]
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
     for msg in st.session_state.messages[1:]:
         role = "You" if msg["role"] == "user" else "Bot"
