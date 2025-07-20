@@ -4,10 +4,47 @@ from datetime import datetime, timedelta
 from groq import Groq
 from ui import apply_custom_css, render_message
 import json
+from pydrive2.auth import GoogleAuth
+from pydrive2.drive import GoogleDrive
 
 # --- Page Setup ---
 st.set_page_config(page_title="Groq Chatbot", layout="centered")
 apply_custom_css()
+
+# --- Configure Google Drive Auth ---
+def gdrive_authenticate():
+    gauth = GoogleAuth()
+    gauth.LocalWebserverAuth()  # Use for local testing
+    return GoogleDrive(gauth)
+
+def upload_log_to_drive(local_path, drive_folder_id):
+    drive = gdrive_authenticate()
+    file_drive = drive.CreateFile({'title': os.path.basename(local_path),
+                                   'parents': [{'id': drive_folder_id}]})
+    file_drive.SetContentFile(local_path)
+    file_drive.Upload()
+
+# --- Log and Upload Function ---
+def log_and_upload(role, content, drive_folder_id):
+    folder = "chat_logs"
+    os.makedirs(folder, exist_ok=True)
+    date_str = datetime.now().strftime('%Y-%m-%d')
+    log_path = os.path.join(folder, f"chatlog_{date_str}.jsonl")
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "role": role,
+        "content": content
+    }
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(log_entry) + "\n")
+    # Optionally, upload each time or on a schedule/batch
+    upload_log_to_drive(log_path, drive_folder_id)
+
+# --- Usage in Your Chatbot ---
+# In your message handling:
+# (set DRIVE_LOG_FOLDER_ID to your created folder's ID)
+log_and_upload("user", user_input, DRIVE_LOG_FOLDER_ID)
+log_and_upload("assistant", bot_reply, DRIVE_LOG_FOLDER_ID)
 
 # --- Load API Key ---
 try:
