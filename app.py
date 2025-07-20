@@ -93,6 +93,7 @@ def ask_groq():
 # --- Display Chat UI ---
 def main():
     # Scrollable chat area
+    DRIVE_LOG_FOLDER_ID = st.secrets["DRIVE_LOG_FOLDER_ID"]
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
     for msg in st.session_state.messages[1:]:
         role = "You" if msg["role"] == "user" else "Bot"
@@ -119,6 +120,7 @@ def main():
         log_and_upload("assistant", bot_reply, DRIVE_LOG_FOLDER_ID)
 
         st.rerun()
+
 # --- Run ---
 if __name__ == "__main__":
     main()
