@@ -2,3 +2,4 @@ streamlit
 groq
 torch
 transformers
+pydrive2
