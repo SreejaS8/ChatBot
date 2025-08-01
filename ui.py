@@ -213,9 +213,8 @@ def apply_custom_css():
 
     /* Hide main content initially for intro */
     .main .block-container {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-        transition: all 1s ease-out;
+        opacity: 1 !important;
+        transform: none !important;
     }
 
     /* Show content after intro */
