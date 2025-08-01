@@ -8,8 +8,11 @@ import time
 # from pydrive2.auth import GoogleAuth
 # from pydrive2.drive import GoogleDrive
 
+# ===== MANUAL GROQ API KEY =====
+GROQ_API_KEY = "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"  # Replace with your actuaWl API key
+
 # ===== SET THE DRIVE FOLDER ID HERE =====
-# DRIVE_LOG_FOLDER_ID = st.secrets.get("DRIVE_LOG_FOLDER_ID", "")
+# DRIVE_LOG_FOLDER_ID = "your_drive_folder_id_here"
 
 # --- Page Setup ---
 st.set_page_config(
@@ -64,16 +67,17 @@ def log_message(role, content):
 
 # --- Load API Key ---
 try:
-    # Try to get from secrets first, then environment
-    api_key = st.secrets.get("GROQ_API_KEY") or os.environ.get("GROQ_API_KEY")
-    if not api_key:
-        raise ValueError("API key not found")
+    # Use the manual API key
+    api_key = GROQ_API_KEY
+    if not api_key or api_key == "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":
+        raise ValueError("Please replace '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' with your actual Groq API key")
     
     client = Groq(api_key=api_key)
     
 except Exception as e:
-    st.error("🔐 **Groq API Key not found!**")
-    st.info("Please add your GROQ_API_KEY to Streamlit secrets or environment variables.")
+    st.error("🔐 **Groq API Key Error!**")
+    st.info("Please replace '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' with your actual Groq API key in the GROQ_API_KEY variable.")
+    st.code("GROQ_API_KEY = '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'")
     st.stop()
 
 # --- Initialize Session State ---

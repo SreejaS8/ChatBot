@@ -416,7 +416,7 @@ def render_startup_intro():
     
     /* Startup title - center screen, slow pop in */
     .startup-title {
-        font-size: 5rem;
+        font-size: 7rem;
         font-weight: 700;
         color: #0700C5;
         text-align: center;
