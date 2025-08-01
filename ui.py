@@ -211,6 +211,19 @@ def apply_custom_css():
         100% { transform: translate(24px, 0); }
     }
 
+    /* Hide main content initially for intro */
+    .main .block-container {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        transition: all 1s ease-out;
+    }
+
+    /* Show content after intro */
+    body.content-ready .main .block-container {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
     /* Mobile responsiveness */
     @media (max-width: 768px) {
         .stApp {
@@ -262,7 +275,7 @@ def show_typing_indicator():
     """, unsafe_allow_html=True)
 
 def render_startup_intro():
-    """Render the clean startup intro animation"""
+    """Render the dramatic zoom-in fade-out intro animation"""
     st.markdown("""
     <div class="intro-overlay" id="introOverlay">
         <div class="intro-title" id="introTitle">SuperLaw</div>
@@ -275,21 +288,21 @@ def render_startup_intro():
         
         if (!overlay || !title) return;
         
-        // Phase 1: Title appears and grows (2 seconds)
+        // Phase 1: Title appears and grows (1.5 seconds)
         setTimeout(() => {
             title.classList.add('grow');
-        }, 500);
+        }, 300);
         
-        // Phase 2: Title fades out completely (1 second)  
+        // Phase 2: Title zooms in dramatically and fades out (1 second)  
         setTimeout(() => {
-            title.classList.add('fade-out');
-        }, 2500);
+            title.classList.add('zoom-fade');
+        }, 1800);
         
         // Phase 3: Hide overlay and show content (0.5 seconds)
         setTimeout(() => {
             overlay.style.display = 'none';
             document.body.classList.add('content-ready');
-        }, 3000);
+        }, 2300);
     }
     
     // Start animation when page loads
@@ -301,7 +314,7 @@ def render_startup_intro():
     </script>
     
     <style>
-    /* Intro overlay - full screen with proper spacing */
+    /* Intro overlay - full screen dramatic background */
     .intro-overlay {
         position: fixed;
         top: 0;
@@ -316,59 +329,57 @@ def render_startup_intro():
         padding: 2rem;
     }
     
-    /* Intro title - clean and simple */
+    /* Intro title - huge and dramatic */
     .intro-title {
-        font-size: 4rem;
+        font-size: 15rem;
         font-weight: 800;
         color: #0700C5;
         text-align: center;
-        letter-spacing: -2px;
+        letter-spacing: -8px;
         opacity: 0;
-        transform: scale(0.8);
-        transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        text-shadow: 0 4px 20px rgba(7, 0, 197, 0.2);
+        transform: scale(0.3);
+        transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        text-shadow: 0 8px 40px rgba(7, 0, 197, 0.3);
+        line-height: 0.8;
     }
     
-    /* Title grows smoothly */
+    /* Title grows to full huge size */
     .intro-title.grow {
         opacity: 1;
-        transform: scale(2.5);
-        font-size: 5rem;
+        transform: scale(1);
     }
     
-    /* Title fades out completely */
-    .intro-title.fade-out {
+    /* Title zooms in dramatically and fades out */
+    .intro-title.zoom-fade {
         opacity: 0;
-        transform: scale(3) translateY(-20px);
-        transition: all 0.8s ease-out;
+        transform: scale(4) translateY(-50px);
+        transition: all 0.8s ease-in;
     }
     
-    /* Hide main content initially */
-    .main .block-container {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.8s ease-out;
-    }
-    
-    /* Show content after intro */
-    body.content-ready .main .block-container {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    
-    /* Mobile responsiveness */
+    /* Mobile responsiveness for huge title */
     @media (max-width: 768px) {
         .intro-title {
-            font-size: 2.5rem;
+            font-size: 8rem;
+            letter-spacing: -4px;
         }
         
-        .intro-title.grow {
-            font-size: 3rem;
-            transform: scale(2);
+        .intro-title.zoom-fade {
+            transform: scale(3) translateY(-30px);
         }
         
         .intro-overlay {
             padding: 1rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .intro-title {
+            font-size: 5rem;
+            letter-spacing: -2px;
+        }
+        
+        .intro-title.zoom-fade {
+            transform: scale(2.5) translateY(-20px);
         }
     }
     </style>
