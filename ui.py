@@ -373,16 +373,18 @@ def render_startup_intro():
             title.classList.add('move-to-left');
         }, 2000);
         
-        // Phase 2: Title flies to top-left (1 second)
+        // Phase 2: Title continues breathing until 15rem, then fades
         setTimeout(() => {
-            // Don't hide the overlay anymore
+            // Check if title has reached desired size, then fade it out
+            title.style.opacity = '0';
+            title.style.transform = 'scale(0.8)';
+        }, 2000);
+
+        // Phase 3: Show main content after title fades
+        setTimeout(() => {
+            overlay.style.display = 'none';
             document.querySelector('.main-content').classList.add('breathe-in');
-            // Show right content if it exists
-            const rightContent = document.querySelector('.right-content-area');
-            if (rightContent) {
-                rightContent.classList.add('show');
-            }
-        }, 3000);
+        }, 2500);
     }
     
     // Start animation when page loads
