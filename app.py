@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from datetime import datetime, timedelta
 from groq import Groq
-from ui import apply_custom_css, render_message, render_title_corner
+from ui import apply_custom_css, render_message, render_startup_intro, render_title_area
 import json
 import time
 
@@ -114,8 +114,11 @@ def main():
     # Initialize session state
     initialize_session()
     
+    # Show dramatic startup intro animation
+    render_startup_intro()
+    
     # Render the fixed title
-    render_title_corner()
+    render_title_area()
     
     # Sidebar info and controls
     with st.sidebar:
@@ -153,8 +156,9 @@ def main():
         render_message(role, msg["content"])
     
     st.markdown('</div>', unsafe_allow_html=True)
-    
-    # The input form for the user
+
+    # The input form fixed at the bottom of the page
+    st.markdown('<div class="fixed-bottom">', unsafe_allow_html=True)
     with st.form("chat_form", clear_on_submit=True):
         col1, col2 = st.columns([4, 1])
         
@@ -172,6 +176,7 @@ def main():
                 use_container_width=True,
                 disabled=st.session_state.is_processing
             )
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Process user input on form submission
     if submitted and user_input and not st.session_state.is_processing:

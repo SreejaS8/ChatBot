@@ -1,11 +1,10 @@
 import streamlit as st
-import time
 
 def apply_custom_css():
     """
     Applies custom CSS for a clean, animated chat interface.
     This includes a cream and blue color theme, animated backgrounds,
-    and stylized message bubbles.
+    and stylized message bubbles, and a fixed footer for the chat input.
     """
     st.markdown("""
     <style>
@@ -19,7 +18,7 @@ def apply_custom_css():
         background: radial-gradient(ellipse at top, #F9E9D6 0%, #f0e1ca 40%, #e8d9be 100%);
         background-attachment: fixed;
         min-height: 100vh;
-        padding: 2rem;
+        padding-bottom: 80px; /* Space for the fixed footer */
     }
 
     /* Custom scrollbar */
@@ -56,6 +55,61 @@ def apply_custom_css():
         0%, 100% { transform: translateY(0px) rotate(0deg); }
         33% { transform: translateY(-15px) rotate(0.5deg); }
         66% { transform: translateY(15px) rotate(-0.5deg); }
+    }
+    
+    /* Intro overlay - full screen dramatic background */
+    .intro-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #F9E9D6 0%, #e6d5b8 50%, #d4c19a 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-in-out;
+    }
+    
+    /* Intro title - huge and dramatic */
+    .intro-title {
+        font-size: 15rem;
+        font-weight: 800;
+        color: #0700C5;
+        text-align: center;
+        letter-spacing: -8px;
+        opacity: 0;
+        transform: scale(0.3);
+        transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        text-shadow: 0 8px 40px rgba(7, 0, 197, 0.3);
+        line-height: 0.8;
+    }
+    
+    /* Title pops in and grows */
+    .intro-title.grow {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    /* Title zooms in dramatically and fades out */
+    .intro-title.zoom-fade {
+        opacity: 0;
+        transform: scale(4) translateY(-50px);
+        transition: all 0.8s ease-in;
+    }
+
+    /* Fixed footer for the chat input */
+    .fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(249, 233, 214, 0.7);
+        backdrop-filter: blur(15px);
+        padding: 10px 20px;
+        box-shadow: 0 -4px 12px rgba(7, 0, 197, 0.1);
+        z-index: 1000;
     }
 
     /* Message bubbles */
@@ -147,17 +201,9 @@ def apply_custom_css():
         padding: 2rem;
         margin: 2rem auto;
         max-width: 800px;
-        max-height: 500px;
-        overflow-y: auto;
         box-shadow: 0 8px 24px rgba(7, 0, 197, 0.08);
     }
     
-    /* Force main content to be visible by default */
-    .main .block-container {
-        opacity: 1;
-        transform: none;
-    }
-
     /* Mobile responsiveness */
     @media (max-width: 768px) {
         .stApp { padding: 1rem; }
@@ -184,8 +230,47 @@ def render_message(role, content):
         </div>
         """, unsafe_allow_html=True)
 
-def render_title_corner():
-    """Render the title and subtitle in the corner after animation"""
+def render_startup_intro():
+    """Render the dramatic zoom-in fade-out intro animation"""
+    st.markdown("""
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-title" id="introTitle">SuperLaw</div>
+    </div>
+    
+    <script>
+    // This script handles the animation logic
+    function startIntroAnimation() {
+        const overlay = document.getElementById('introOverlay');
+        const title = document.getElementById('introTitle');
+        
+        if (!overlay || !title) return;
+        
+        // Phase 1: Title appears and grows (1.5 seconds)
+        setTimeout(() => {
+            title.classList.add('grow');
+        }, 300);
+        
+        // Phase 2: Title zooms in dramatically and fades out (1 second) 
+        setTimeout(() => {
+            title.classList.add('zoom-fade');
+        }, 1800);
+        
+        // Phase 3: Hide overlay (0.5 seconds)
+        setTimeout(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500); // Wait for the fade-out transition
+        }, 2300);
+    }
+    
+    // Start animation when page loads
+    startIntroAnimation();
+    </script>
+    """, unsafe_allow_html=True)
+
+def render_title_area():
+    """Render the title and subtitle at the top of the page"""
     st.markdown("""
     <div style="text-align: center; margin: 2rem 0 3rem 0;">
         <h1 style="color: #0700C5; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">
