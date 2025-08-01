@@ -370,19 +370,19 @@ def render_startup_intro():
         
         // Phase 1: Title slowly pops in and breathes (2 seconds)
         setTimeout(() => {
-            title.classList.add('fly-to-corner');
+            title.classList.add('move-to-left');
         }, 2000);
         
         // Phase 2: Title flies to top-left (1 second)
         setTimeout(() => {
-            overlay.classList.add('fade-out');
-        }, 3000);
-        
-        // Phase 3: Hide overlay and show main content (0.5 seconds)
-        setTimeout(() => {
-            overlay.style.display = 'none';
+            // Don't hide the overlay anymore
             document.querySelector('.main-content').classList.add('breathe-in');
-        }, 3500);
+            // Show right content if it exists
+            const rightContent = document.querySelector('.right-content-area');
+            if (rightContent) {
+                rightContent.classList.add('show');
+            }
+        }, 3000);
     }
     
     // Start animation when page loads
@@ -406,11 +406,11 @@ def render_startup_intro():
         justify-content: center;
         align-items: center;
         z-index: 9999;
-        transition: opacity 0.6s ease-out;
+        transition: background 1s ease-out;  /* Changed from opacity to background */
     }
     
-    .startup-overlay.fade-out {
-        opacity: 0;
+    .startup-overlay.fade-background {
+        background: transparent;
         pointer-events: none;
     }
     
@@ -446,17 +446,17 @@ def render_startup_intro():
     }
     
     /* Flying animation to top-left */
-    .startup-title.fly-to-corner {
+    .startup-title.move-to-left {
         position: fixed;
-        top: 2rem;
-        left: 2rem;
-        font-size: 2rem;
-        transform: scale(0.8);
+        top: 50%;
+        left: 25%;  /* Center of left half */
+        transform: translateY(-50%);
+        font-size: 6rem;  /* Your requested size */
         opacity: 0.9;
         animation: none;
         z-index: 10000;
         transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
+    }   
     
     /* Main content breathing in */
     .main-content {
@@ -550,7 +550,7 @@ def render_startup_intro():
             letter-spacing: -1px;
         }
         
-        .startup-title.fly-to-corner {
+        .startup-title.move-to-left {
             font-size: 1.5rem;
             top: 1rem;
             left: 1rem;
