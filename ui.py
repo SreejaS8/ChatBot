@@ -1,14 +1,19 @@
 import streamlit as st
+import time
 
 def apply_custom_css():
-    """Apply custom CSS with clean fade-in animation"""
+    """
+    Applies custom CSS for a clean, animated chat interface.
+    This includes a cream and blue color theme, animated backgrounds,
+    and stylized message bubbles.
+    """
     st.markdown("""
     <style>
     /* Hide Streamlit branding and menu */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-    
+
     /* Main app styling with cream and blue theme */
     .stApp {
         background: radial-gradient(ellipse at top, #F9E9D6 0%, #f0e1ca 40%, #e8d9be 100%);
@@ -16,7 +21,7 @@ def apply_custom_css():
         min-height: 100vh;
         padding: 2rem;
     }
-    
+
     /* Custom scrollbar */
     ::-webkit-scrollbar {
         width: 6px;
@@ -30,7 +35,7 @@ def apply_custom_css():
         border-radius: 8px;
     }
 
-    /* Animated background */
+    /* Animated background bubbles */
     .stApp::before {
         content: '';
         position: fixed;
@@ -38,7 +43,7 @@ def apply_custom_css():
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: 
+        background-image:
             radial-gradient(circle at 20% 50%, rgba(7, 0, 197, 0.05) 0%, transparent 50%),
             radial-gradient(circle at 80% 20%, rgba(249, 233, 214, 0.15) 0%, transparent 50%),
             radial-gradient(circle at 40% 80%, rgba(7, 0, 197, 0.03) 0%, transparent 50%);
@@ -165,7 +170,6 @@ def apply_custom_css():
         width: 80px;
         height: 80px;
     }
-
     .loading-dots div {
         position: absolute;
         top: 33px;
@@ -175,144 +179,29 @@ def apply_custom_css():
         background: #0700C5;
         animation-timing-function: cubic-bezier(0, 1, 1, 0);
     }
+    .loading-dots div:nth-child(1) { left: 8px; animation: loading1 0.6s infinite; }
+    .loading-dots div:nth-child(2) { left: 8px; animation: loading2 0.6s infinite; }
+    .loading-dots div:nth-child(3) { left: 32px; animation: loading2 0.6s infinite; }
+    .loading-dots div:nth-child(4) { left: 56px; animation: loading3 0.6s infinite; }
+    @keyframes loading1 { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+    @keyframes loading3 { 0% { transform: scale(1); } 100% { transform: scale(0); } }
+    @keyframes loading2 { 0% { transform: translate(0, 0); } 100% { transform: translate(24px, 0); } }
 
-    .loading-dots div:nth-child(1) {
-        left: 8px;
-        animation: loading1 0.6s infinite;
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .stApp { padding: 1rem; }
+        .user-message, .bot-message { margin-left: 5%; margin-right: 5%; }
+        .chat-container { padding: 1rem; margin: 1rem auto; }
     }
-
-    .loading-dots div:nth-child(2) {
-        left: 8px;
-        animation: loading2 0.6s infinite;
-    }
-
-    .loading-dots div:nth-child(3) {
-        left: 32px;
-        animation: loading2 0.6s infinite;
-    }
-
-    .loading-dots div:nth-child(4) {
-        left: 56px;
-        animation: loading3 0.6s infinite;
-    }
-
-    @keyframes loading1 {
-        0% { transform: scale(0); }
-        100% { transform: scale(1); }
-    }
-
-    @keyframes loading3 {
-        0% { transform: scale(1); }
-        100% { transform: scale(0); }
-    }
-
-    @keyframes loading2 {
-        0% { transform: translate(0, 0); }
-        100% { transform: translate(24px, 0); }
-    }
-
-    /* Hide main content initially for intro */
+    
+    /* --- CSS FOR THE INTRO ANIMATION --- */
+    /* This rule ensures the main app content is always visible */
+    /* The intro overlay will play on top of it and then be hidden */
     .main .block-container {
         opacity: 1 !important;
         transform: none !important;
     }
-
-    /* Show content after intro */
-    body.content-ready .main .block-container {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
-    /* Mobile responsiveness */
-    @media (max-width: 768px) {
-        .stApp {
-            padding: 1rem;
-        }
-        
-        .user-message, .bot-message {
-            margin-left: 5%;
-            margin-right: 5%;
-        }
-        
-        .chat-container {
-            padding: 1rem;
-            margin: 1rem auto;
-        }
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-def render_message(role, content):
-    """Render a message with beautiful styling"""
-    if role == "You":
-        st.markdown(f"""
-        <div class="user-message">
-            <strong>You:</strong><br>
-            {content}
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.markdown(f"""
-        <div class="bot-message">
-            <strong>SuperLaw AI:</strong><br>
-            {content}
-        </div>
-        """, unsafe_allow_html=True)
-
-def show_typing_indicator():
-    """Show a typing indicator while AI is responding"""
-    st.markdown("""
-    <div class="bot-message">
-        <strong>SuperLaw AI is thinking...</strong><br>
-        <div class="loading-dots">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-def render_startup_intro():
-    """Render the dramatic zoom-in fade-out intro animation"""
-    st.markdown("""
-    <div class="intro-overlay" id="introOverlay">
-        <div class="intro-title" id="introTitle">SuperLaw</div>
-    </div>
     
-    <script>
-    function startIntroAnimation() {
-        const overlay = document.getElementById('introOverlay');
-        const title = document.getElementById('introTitle');
-        
-        if (!overlay || !title) return;
-        
-        // Phase 1: Title appears and grows (1.5 seconds)
-        setTimeout(() => {
-            title.classList.add('grow');
-        }, 300);
-        
-        // Phase 2: Title zooms in dramatically and fades out (1 second)  
-        setTimeout(() => {
-            title.classList.add('zoom-fade');
-        }, 1800);
-        
-        // Phase 3: Hide overlay and show content (0.5 seconds)
-        setTimeout(() => {
-            overlay.style.display = 'none';
-            document.body.classList.add('content-ready');
-        }, 2300);
-    }
-    
-    // Start animation when page loads
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startIntroAnimation);
-    } else {
-        startIntroAnimation();
-    }
-    </script>
-    
-    <style>
     /* Intro overlay - full screen dramatic background */
     .intro-overlay {
         position: fixed;
@@ -326,6 +215,7 @@ def render_startup_intro():
         align-items: center;
         z-index: 9999;
         padding: 2rem;
+        transition: all 0.5s ease-in-out;
     }
     
     /* Intro title - huge and dramatic */
@@ -357,35 +247,76 @@ def render_startup_intro():
     
     /* Mobile responsiveness for huge title */
     @media (max-width: 768px) {
-        .intro-title {
-            font-size: 8rem;
-            letter-spacing: -4px;
-        }
-        
-        .intro-title.zoom-fade {
-            transform: scale(3) translateY(-30px);
-        }
-        
-        .intro-overlay {
-            padding: 1rem;
-        }
+        .intro-title { font-size: 8rem; letter-spacing: -4px; }
+        .intro-title.zoom-fade { transform: scale(3) translateY(-30px); }
+        .intro-overlay { padding: 1rem; }
     }
     
     @media (max-width: 480px) {
-        .intro-title {
-            font-size: 5rem;
-            letter-spacing: -2px;
-        }
-        
-        .intro-title.zoom-fade {
-            transform: scale(2.5) translateY(-20px);
-        }
+        .intro-title { font-size: 5rem; letter-spacing: -2px; }
+        .intro-title.zoom-fade { transform: scale(2.5) translateY(-20px); }
     }
     </style>
     """, unsafe_allow_html=True)
 
+def render_message(role, content):
+    """Render a message with beautiful styling"""
+    if role == "You":
+        st.markdown(f"""
+        <div class="user-message">
+            <strong>You:</strong><br>
+            {content}
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown(f"""
+        <div class="bot-message">
+            <strong>SuperLaw AI:</strong><br>
+            {content}
+        </div>
+        """, unsafe_allow_html=True)
+
+def render_startup_intro():
+    """Render the dramatic zoom-in fade-out intro animation"""
+    st.markdown("""
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-title" id="introTitle">SuperLaw</div>
+    </div>
+    
+    <script>
+    // This script handles the animation logic
+    function startIntroAnimation() {
+        const overlay = document.getElementById('introOverlay');
+        const title = document.getElementById('introTitle');
+        
+        if (!overlay || !title) return;
+        
+        // Phase 1: Title appears and grows (1.5 seconds)
+        setTimeout(() => {
+            title.classList.add('grow');
+        }, 300);
+        
+        // Phase 2: Title zooms in dramatically and fades out (1 second) 
+        setTimeout(() => {
+            title.classList.add('zoom-fade');
+        }, 1800);
+        
+        // Phase 3: Hide overlay (0.5 seconds)
+        setTimeout(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500); // Wait for the fade-out transition
+        }, 2300);
+    }
+    
+    // Start animation when page loads
+    startIntroAnimation();
+    </script>
+    """, unsafe_allow_html=True)
+
 def render_title_corner():
-    """Render the subtitle after animation"""
+    """Render the title and subtitle in the corner after animation"""
     st.markdown("""
     <div style="text-align: center; margin: 2rem 0 3rem 0;">
         <h1 style="color: #0700C5; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">
@@ -394,5 +325,19 @@ def render_title_corner():
         <p style="color: rgba(7, 0, 197, 0.7); font-size: 1.2rem; font-weight: 500;">
             🏛️ Your Intelligent Legal Assistant
         </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+def show_typing_indicator():
+    """Show a typing indicator while AI is responding"""
+    st.markdown("""
+    <div class="bot-message">
+        <strong>SuperLaw AI is thinking...</strong><br>
+        <div class="loading-dots">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
