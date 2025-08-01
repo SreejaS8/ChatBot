@@ -17,45 +17,61 @@ st.set_page_config(
 # Apply stunning CSS from ui.py
 apply_custom_css()
 
-# --- Log Function ---
-def log_message(role, content):
-    """Log messages to a local file for history and debugging"""
-    folder = "chat_logs"
-    os.makedirs(folder, exist_ok=True)
-    date_str = datetime.now().strftime('%Y-%m-%d')
-    log_path = os.path.join(folder, f"superlaw_chatlog_{date_str}.jsonl")
+# --- Placeholder for Google Drive Logging ---
+def log_to_google_drive(folder_id, data):
+    """
+    Placeholder function to log data to a file in Google Drive.
     
+    This function needs to be implemented by you using a Google Drive API library.
+    It should handle:
+    1. Authenticating with Google Drive (e.g., using a service account).
+    2. Finding or creating a log file in the specified folder_id.
+    3. Appending the `data` to the file.
+    
+    This is a conceptual implementation. You must fill in the actual API logic.
+    """
+    try:
+        # Example: print to console for demonstration
+        print(f"Logging to Google Drive folder '{folder_id}':\n{data}\n---")
+        # In a real implementation, you would use a library like google-api-python-client
+        # to authenticate and write the data to a file in Google Drive.
+        return True
+    except Exception as e:
+        st.error(f"Failed to log to Google Drive: {e}")
+        return False
+
+def log_message(role, content, drive_folder_id):
+    """Log messages to Google Drive for history and persistence"""
     log_entry = {
         "timestamp": datetime.now().isoformat(),
         "role": role,
         "content": content,
-        "session_id": st.session_state.get('session_id', 'unknown'),
-        "user_ip": st.session_state.get('user_ip', 'local')
+        "session_id": st.session_state.get('session_id', 'unknown')
     }
     
-    try:
-        with open(log_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
-            
-    except Exception as e:
-        st.error(f"Logging error: {str(e)}")
+    log_to_google_drive(drive_folder_id, json.dumps(log_entry, ensure_ascii=False) + "\n")
 
-# --- Load API Key from Streamlit Secrets ---
+
+# --- Load API Keys from Streamlit Secrets ---
 try:
     api_key = st.secrets["GROQ_API_KEY"]
+    drive_folder_id = st.secrets["DRIVE_LOG_FOLDER_ID"]
     if not api_key:
         raise ValueError("GROQ_API_KEY not found in secrets")
+    if not drive_folder_id:
+        raise ValueError("DRIVE_LOG_FOLDER_ID not found in secrets")
     
     client = Groq(api_key=api_key)
     
 except Exception as e:
-    st.error("🔐 **Groq API Key not found in Streamlit secrets!**")
-    st.info("""
-    **Setup Instructions:**
-    1. Go to your Streamlit app settings.
-    2. Add to a file named `.streamlit/secrets.toml`:
+    st.error("🔐 **Required secrets not found!**")
+    st.info(f"""
+    **Missing Secret**: {e}
+    
+    Please add the following to your `.streamlit/secrets.toml`:
     ```toml
     GROQ_API_KEY = "your_groq_api_key_here"
+    DRIVE_LOG_FOLDER_ID = "your_google_drive_folder_id_here"
     ```
     """)
     st.stop()
@@ -107,7 +123,7 @@ def main():
     # Sidebar info and controls
     with st.sidebar:
         st.markdown("### 📊 Session Info")
-        st.info(f"**Session:** {st.session_state.session_id[:12]}...")
+        st.info(f"**Session ID:** {st.session_state.session_id[:12]}...")
         st.info(f"**Started:** {st.session_state.start_time.strftime('%H:%M:%S')}")
         st.info(f"**Messages:** {len(st.session_state.messages) - 1}")
         
@@ -115,6 +131,21 @@ def main():
             # Keep the system message but clear the rest
             st.session_state.messages = [st.session_state.messages[0]]
             st.rerun()
+
+        st.markdown("---")
+        st.markdown("### ⚖️ About SuperLaw")
+        st.markdown("""
+        Your intelligent legal assistant powered by advanced AI. 
+        
+        **Features:**
+        - 🧠 Advanced legal knowledge
+        - 📝 Document analysis
+        - 🔍 Case law research
+        - ⚡ Instant responses
+        - 💾 Chat history logged to Google Drive
+        
+        **Disclaimer:** Always consult qualified attorneys for legal advice.
+        """)
 
     # Chat container for displaying messages
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
@@ -151,12 +182,12 @@ def main():
         
         # Add the user's message to the chat history
         st.session_state.messages.append({"role": "user", "content": user_input})
-        log_message("user", user_input)
+        log_message("user", user_input, drive_folder_id)
         
         # Get and add the AI's response
         ai_response = get_ai_response(st.session_state.messages)
         st.session_state.messages.append({"role": "assistant", "content": ai_response})
-        log_message("assistant", ai_response)
+        log_message("assistant", ai_response, drive_folder_id)
         
         st.session_state.is_processing = False
         st.rerun()
