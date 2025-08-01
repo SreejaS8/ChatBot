@@ -180,7 +180,7 @@ def main():
         
         with col1:
             user_input = st.text_input(
-                "Ask SuperLaw anything about law...",
+                "Ask SuperLaw AI anything about law...",
                 placeholder="Type your legal question here...",
                 key="user_input",
                 label_visibility="collapsed"
