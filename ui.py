@@ -12,12 +12,12 @@ def apply_custom_css():
     /* Hide main Streamlit content initially for startup animation */
     .main .block-container {
         opacity: 0;
-        animation: mainContentFadeIn 0.6s ease-out 3.5s both;
+        animation: mainContentFadeIn 0.8s ease-out 4s both;
     }
     
     @keyframes mainContentFadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     /* Main app styling with cream and blue theme */
@@ -41,13 +41,6 @@ def apply_custom_css():
     }
     ::-webkit-scrollbar-thumb:hover {
         background: rgba(7, 0, 197, 0.8);
-    }
-
-    /* Main app styling with cream and blue theme */
-    .stApp {
-        background: radial-gradient(ellipse at top, #F9E9D6 0%, #f0e1ca 40%, #e8d9be 100%);
-        background-attachment: fixed;
-        min-height: 100vh;
     }
 
     /* Animated background with cream tones */
@@ -352,144 +345,169 @@ def show_typing_indicator():
     """, unsafe_allow_html=True)
 
 def render_startup_intro():
-    """Render the startup intro animation"""
+    """Render the Netflix-style startup intro animation"""
     st.markdown("""
-    <div class="startup-overlay" id="startupOverlay">
-        <div class="startup-title" id="startupTitle">
-            Superlaw
+    <div class="netflix-intro-overlay" id="netflixIntro">
+        <div class="netflix-title" id="netflixTitle">
+            SuperLaw
         </div>
+        <div class="netflix-flash" id="netflixFlash"></div>
     </div>
     
     <script>
-    // Startup animation sequence
-    function startupAnimation() {
-        const overlay = document.getElementById('startupOverlay');
-        const title = document.getElementById('startupTitle');
+    // Netflix-style startup animation sequence
+    function netflixStartupAnimation() {
+        const overlay = document.getElementById('netflixIntro');
+        const title = document.getElementById('netflixTitle');
+        const flash = document.getElementById('netflixFlash');
         
-        if (!overlay || !title) return;
+        if (!overlay || !title || !flash) return;
         
-        // Phase 1: Title slowly pops in and breathes (2 seconds)
+        // Phase 1: Title appears and grows (1.5 seconds)
         setTimeout(() => {
-            title.classList.add('move-to-left');
-        }, 2000);
+            title.classList.add('appear');
+        }, 200);
         
-        // Phase 2: Title continues breathing until 15rem, then fades
+        // Phase 2: Dramatic zoom and flash (1 second)
         setTimeout(() => {
-            // Check if title has reached desired size, then fade it out
-            title.style.opacity = '0';
-            title.style.transform = 'scale(0.8)';
-        }, 2000);
-
-        // Phase 3: Show main content after title fades
+            title.classList.add('zoom-dramatic');
+            flash.classList.add('flash-effect');
+        }, 1700);
+        
+        // Phase 3: Complete fade out and show content (0.8 seconds)
+        setTimeout(() => {
+            overlay.classList.add('complete-fadeout');
+        }, 2500);
+        
+        // Phase 4: Remove overlay and show main content
         setTimeout(() => {
             overlay.style.display = 'none';
-            document.querySelector('.main-content').classList.add('breathe-in');
-        }, 2500);
+        }, 3300);
     }
     
-    // Start animation when page loads
+    // Start Netflix animation when page loads
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startupAnimation);
+        document.addEventListener('DOMContentLoaded', netflixStartupAnimation);
     } else {
-        startupAnimation();
+        netflixStartupAnimation();
     }
     </script>
     
     <style>
-    /* Startup overlay - covers entire screen */
-    .startup-overlay {
+    /* Netflix-style startup overlay - covers entire screen */
+    .netflix-intro-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: radial-gradient(ellipse at center, #F9E9D6 0%, #e6d5b8 30%, #d4c19a 100%);
+        background: #000000;
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 9999;
-        transition: background 1s ease-out;  /* Changed from opacity to background */
+        overflow: hidden;
     }
     
-    .startup-overlay.fade-background {
-        background: transparent;
+    .netflix-intro-overlay.complete-fadeout {
+        opacity: 0;
+        transition: opacity 0.8s ease-out;
         pointer-events: none;
     }
     
-    /* Startup title - center screen, slow pop in */
-    .startup-title {
-        font-size: 17rem;
-        font-weight: 800;
+    /* Netflix-style title - starts invisible */
+    .netflix-title {
+        font-size: 8rem;
+        font-weight: 900;
         color: #0700C5;
         text-align: center;
-        letter-spacing: -2px;
+        letter-spacing: -3px;
         opacity: 0;
-        transform: scale(0.8) translateY(20px);
-        animation: slowPopIn 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
-        text-shadow: 0 4px 20px rgba(7, 0, 197, 0.15);
-        transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        transform-origin: center center;
+        transform: scale(0.3) translateY(50px);
+        text-shadow: 
+            0 0 20px rgba(7, 0, 197, 0.3),
+            0 0 40px rgba(7, 0, 197, 0.2),
+            0 0 80px rgba(7, 0, 197, 0.1);
+        position: relative;
+        z-index: 10001;
+        font-family: 'Arial Black', sans-serif;
     }
     
-    /* Slow pop-in animation */
-    @keyframes slowPopIn {
-        0% {
-            opacity: 0;
-            transform: scale(0.8) translateY(30px);
-        }
-        60% {
-            opacity: 0.8;
-            transform: scale(1.05) translateY(-5px);
-        }
-        100% {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-        }
-    }
-    
-    /* Flying animation to top-left */
-    .startup-title.move-to-left {
-        position: fixed;
-        top: 50%;
-        left: 25%;  /* Center of left half */
-        transform: translateY(-50%);
-        font-size: 6rem;  /* Your requested size */
-        opacity: 0.9;
-        animation: none;
-        z-index: 10000;
-        transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }   
-    
-    /* Main content breathing in */
-    .main-content {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    
-    .main-content.breathe-in {
+    /* Title appears with smooth entrance */
+    .netflix-title.appear {
         opacity: 1;
-        transform: translateY(0);
-        animation: contentSlideIn 0.6s ease-out;
+        transform: scale(1) translateY(0);
+        transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        animation: pulseGlow 2s ease-in-out;
     }
     
-    @keyframes contentSlideIn {
+    /* Dramatic zoom effect like Netflix */
+    .netflix-title.zoom-dramatic {
+        transform: scale(15) translateZ(0);
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+        filter: blur(2px);
+    }
+    
+    /* Pulsing glow effect */
+    @keyframes pulseGlow {
+        0%, 100% {
+            text-shadow: 
+                0 0 20px rgba(7, 0, 197, 0.3),
+                0 0 40px rgba(7, 0, 197, 0.2),
+                0 0 80px rgba(7, 0, 197, 0.1);
+        }
+        50% {
+            text-shadow: 
+                0 0 30px rgba(7, 0, 197, 0.6),
+                0 0 60px rgba(7, 0, 197, 0.4),
+                0 0 120px rgba(7, 0, 197, 0.2);
+        }
+    }
+    
+    /* Flash effect like Netflix logo flash */
+    .netflix-flash {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at center,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(7, 0, 197, 0.3) 30%,
+            transparent 70%
+        );
+        opacity: 0;
+        z-index: 10000;
+        pointer-events: none;
+    }
+    
+    .netflix-flash.flash-effect {
+        opacity: 1;
+        animation: netflixFlash 0.6s ease-out;
+    }
+    
+    @keyframes netflixFlash {
         0% {
             opacity: 0;
-            transform: translateY(30px);
+            transform: scale(0.5);
+        }
+        30% {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        70% {
+            opacity: 0.8;
+            transform: scale(2);
         }
         100% {
-            opacity: 1;
-            transform: translateY(0);
+            opacity: 0;
+            transform: scale(4);
         }
     }
     
-    /* Hide main Streamlit content initially */
-    .main .block-container {
-        transition: all 0.4s ease-out;
-    }
-    
-    /* Enhanced chat container breathing effect */
+    /* Enhanced chat container that appears after Netflix intro */
     .chat-container {
         background: rgba(249, 233, 214, 0.08);
         backdrop-filter: blur(15px);
@@ -505,7 +523,7 @@ def render_startup_intro():
         position: relative;
         transform: translateY(15px);
         opacity: 0;
-        animation: chatBoxSlideIn 0.8s ease-out 3.7s both;
+        animation: chatBoxSlideIn 0.8s ease-out 4.2s both;
     }
     
     @keyframes chatBoxSlideIn {
@@ -519,7 +537,7 @@ def render_startup_intro():
         }
     }
     
-    /* Input bar breathing in */
+    /* Input bar appears after Netflix intro */
     .input-bar {
         position: sticky;
         bottom: 0;
@@ -531,7 +549,7 @@ def render_startup_intro():
         margin-top: 2rem;
         transform: translateY(20px);
         opacity: 0;
-        animation: inputBarSlideIn 0.8s ease-out 4s both;
+        animation: inputBarSlideIn 0.8s ease-out 4.5s both;
     }
     
     @keyframes inputBarSlideIn {
@@ -545,18 +563,30 @@ def render_startup_intro():
         }
     }
     
-    /* Mobile responsiveness for startup */
+    /* Mobile responsiveness for Netflix intro */
     @media (max-width: 768px) {
-        .startup-title {
-            font-size: 3rem;
-            letter-spacing: -1px;
+        .netflix-title {
+            font-size: 4rem;
+            letter-spacing: -2px;
         }
         
-        .startup-title.move-to-left {
-            font-size: 1.5rem;
-            top: 1rem;
-            left: 1rem;
+        .netflix-title.zoom-dramatic {
+            transform: scale(8) translateZ(0);
         }
+    }
+    
+    /* Additional Netflix-style touches */
+    .netflix-intro-overlay::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 30% 40%, rgba(7, 0, 197, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 70% 60%, rgba(7, 0, 197, 0.05) 0%, transparent 50%);
+        z-index: 9998;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -565,8 +595,8 @@ def render_title_corner():
     """Render the title in corner after animation"""
     st.markdown("""
     <div style="margin-bottom: 2rem;">
-        <div style="text-align: center; color: rgba(255,255,255,0.7); font-size: 1.2rem;">
-            Your Intelligent Legal Assistant
+        <div style="text-align: center; color: rgba(7, 0, 197, 0.8); font-size: 1.5rem; font-weight: 600;">
+            🏛️ Your Intelligent Legal Assistant
         </div>
     </div>
     """, unsafe_allow_html=True)
