@@ -1,12 +1,12 @@
-# 💬 Groq Chatbot (LLaMA3-8B)
+# Groq Chatbot (LLaMA3-8B)
 
 A simple web chatbot interface using [Groq](https://groq.com/) and the `llama3-8b-8192` model, powered by Streamlit.
 
-## 🚀 Live Demo
+## Live Demo
 
 Coming Soon! (Deploy to Hugging Face Spaces or Streamlit Cloud)
 
-## 📦 Setup Locally
+## Setup Locally
 
 ```bash
 git clone https://github.com/SreejaS8/ChatBot.git
