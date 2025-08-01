@@ -19,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Apply stunning CSS with Netflix intro
+# Apply stunning CSS
 apply_custom_css()
 
 # --- Configure Google Drive Auth (Optional - uncomment if needed) ---
@@ -128,101 +128,93 @@ def main():
     initialize_session()
     check_session_reset()
     
-    # Show Netflix-style startup intro animation
+    # Show startup intro animation
     render_startup_intro()
     
-    # Main content container - will be hidden during intro
-    with st.container():
-        # Render title after animation
-        render_title_corner()
+    # Wrap main content for animation
+    st.markdown('<div class="main-content">', unsafe_allow_html=True)
+    
+    # Render title in corner after animation
+    render_title_corner()
+    
+    # Sidebar info
+    with st.sidebar:
+        st.markdown("### 📊 Session Info")
+        st.info(f"**Session:** {st.session_state.session_id[:12]}...")
+        st.info(f"**Started:** {st.session_state.start_time.strftime('%H:%M:%S')}")
+        st.info(f"**Messages:** {len(st.session_state.messages) - 1}")
         
-        # Sidebar info
-        with st.sidebar:
-            st.markdown("### 📊 Session Info")
-            st.info(f"**Session:** {st.session_state.session_id[:12]}...")
-            st.info(f"**Started:** {st.session_state.start_time.strftime('%H:%M:%S')}")
-            st.info(f"**Messages:** {len(st.session_state.messages) - 1}")
-            
-            if st.button("🔄 Reset Chat"):
-                st.session_state.messages = [st.session_state.messages[0]]  # Keep system message
-                st.rerun()
-            
-            st.markdown("---")
-            st.markdown("### ⚖️ About SuperLaw")
-            st.markdown("""
-            Your intelligent legal assistant powered by advanced AI. 
-            
-            **Features:**
-            - 🧠 Advanced legal knowledge
-            - 📝 Document analysis
-            - 🔍 Case law research
-            - ⚡ Instant responses
-            
-            **Disclaimer:** Always consult qualified attorneys for legal advice.
-            """)
-        
-        # Chat container
-        st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-        
-        # Display chat messages
-        for msg in st.session_state.messages[1:]:  # Skip system message
-            role = "You" if msg["role"] == "user" else "SuperLaw AI"
-            render_message(role, msg["content"])
-        
-        # Show typing indicator if processing
-        if st.session_state.is_processing:
-            show_typing_indicator()
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Input form
-        st.markdown('<div class="input-bar">', unsafe_allow_html=True)
-        
-        with st.form("chat_form", clear_on_submit=True):
-            col1, col2 = st.columns([4, 1])
-            
-            with col1:
-                user_input = st.text_input(
-                    "Ask SuperLaw anything about law...",
-                    placeholder="Type your legal question here...",
-                    key="user_input",
-                    label_visibility="collapsed"
-                )
-            
-            with col2:
-                submitted = st.form_submit_button(
-                    "Send 🚀",
-                    use_container_width=True,
-                    disabled=st.session_state.is_processing
-                )
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Process user input
-        if submitted and user_input and not st.session_state.is_processing:
-            st.session_state.is_processing = True
-            
-            # Add user message
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            log_message("user", user_input)
-            
-            # Rerun to show user message and typing indicator
+        if st.button("🔄 Reset Chat"):
+            st.session_state.messages = [st.session_state.messages[0]]  # Keep system message
             st.rerun()
         
-        # Get AI response if we just added a user message
-        if (st.session_state.is_processing and 
-            len(st.session_state.messages) > 1 and 
-            st.session_state.messages[-1]["role"] == "user"):
-            
-            # Get AI response
-            ai_response = get_ai_response()
-            
-            # Add AI response
-            st.session_state.messages.append({"role": "assistant", "content": ai_response})
-            log_message("assistant", ai_response)
-            
-            st.session_state.is_processing = False
-            st.rerun()
+        st.markdown("---")
+        st.markdown("### ⚖️ About SuperLaw")
+        st.markdown("""
+        Your intelligent legal assistant powered by advanced AI. 
+        
+        **Features:**
+        - 🧠 Advanced legal knowledge
+        - 📝 Document analysis
+        - 🔍 Case law research
+        - ⚡ Instant responses
+        
+        **Disclaimer:** Always consult qualified attorneys for legal advice.
+        """)
+    
+    # Chat container
+    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+    
+    # Display chat messages
+    for msg in st.session_state.messages[1:]:  # Skip system message
+        role = "You" if msg["role"] == "user" else "SuperLaw AI"
+        render_message(role, msg["content"])
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Input form
+    st.markdown('<div class="input-bar">', unsafe_allow_html=True)
+    
+    with st.form("chat_form", clear_on_submit=True):
+        col1, col2 = st.columns([4, 1])
+        
+        with col1:
+            user_input = st.text_input(
+                "Ask SuperLaw anything about law...",
+                placeholder="Type your legal question here...",
+                key="user_input",
+                label_visibility="collapsed"
+            )
+        
+        with col2:
+            submitted = st.form_submit_button(
+                "Send 🚀",
+                use_container_width=True,
+                disabled=st.session_state.is_processing
+            )
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Process user input
+    if submitted and user_input and not st.session_state.is_processing:
+        st.session_state.is_processing = True
+        
+        # Add user message
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        log_message("user", user_input)
+        
+        # Get AI response
+        ai_response = get_ai_response()
+        
+        # Add AI response
+        st.session_state.messages.append({"role": "assistant", "content": ai_response})
+        log_message("assistant", ai_response)
+        
+        st.session_state.is_processing = False
+        st.rerun()
+    
+    # Close main content wrapper
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Run the app ---
 if __name__ == "__main__":
