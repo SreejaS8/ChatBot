@@ -151,110 +151,18 @@ def apply_custom_css():
         overflow-y: auto;
         box-shadow: 0 8px 24px rgba(7, 0, 197, 0.08);
     }
-
-    /* Success/Error messages */
-    .stSuccess {
-        background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%) !important;
-        border-radius: 15px !important;
+    
+    /* Force main content to be visible by default */
+    .main .block-container {
+        opacity: 1;
+        transform: none;
     }
-
-    .stError {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%) !important;
-        border-radius: 15px !important;
-    }
-
-    /* Loading dots */
-    .loading-dots {
-        display: inline-block;
-        position: relative;
-        width: 80px;
-        height: 80px;
-    }
-    .loading-dots div {
-        position: absolute;
-        top: 33px;
-        width: 13px;
-        height: 13px;
-        border-radius: 50%;
-        background: #0700C5;
-        animation-timing-function: cubic-bezier(0, 1, 1, 0);
-    }
-    .loading-dots div:nth-child(1) { left: 8px; animation: loading1 0.6s infinite; }
-    .loading-dots div:nth-child(2) { left: 8px; animation: loading2 0.6s infinite; }
-    .loading-dots div:nth-child(3) { left: 32px; animation: loading2 0.6s infinite; }
-    .loading-dots div:nth-child(4) { left: 56px; animation: loading3 0.6s infinite; }
-    @keyframes loading1 { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-    @keyframes loading3 { 0% { transform: scale(1); } 100% { transform: scale(0); } }
-    @keyframes loading2 { 0% { transform: translate(0, 0); } 100% { transform: translate(24px, 0); } }
 
     /* Mobile responsiveness */
     @media (max-width: 768px) {
         .stApp { padding: 1rem; }
         .user-message, .bot-message { margin-left: 5%; margin-right: 5%; }
         .chat-container { padding: 1rem; margin: 1rem auto; }
-    }
-    
-    /* --- CSS FOR THE INTRO ANIMATION --- */
-    /* This rule ensures the main app content is always visible */
-    /* The intro overlay will play on top of it and then be hidden */
-    .main .block-container {
-        opacity: 1 !important;
-        transform: none !important;
-    }
-    
-    /* Intro overlay - full screen dramatic background */
-    .intro-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: linear-gradient(135deg, #F9E9D6 0%, #e6d5b8 50%, #d4c19a 100%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        padding: 2rem;
-        transition: all 0.5s ease-in-out;
-    }
-    
-    /* Intro title - huge and dramatic */
-    .intro-title {
-        font-size: 15rem;
-        font-weight: 800;
-        color: #0700C5;
-        text-align: center;
-        letter-spacing: -8px;
-        opacity: 0;
-        transform: scale(0.3);
-        transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        text-shadow: 0 8px 40px rgba(7, 0, 197, 0.3);
-        line-height: 0.8;
-    }
-    
-    /* Title grows to full huge size */
-    .intro-title.grow {
-        opacity: 1;
-        transform: scale(1);
-    }
-    
-    /* Title zooms in dramatically and fades out */
-    .intro-title.zoom-fade {
-        opacity: 0;
-        transform: scale(4) translateY(-50px);
-        transition: all 0.8s ease-in;
-    }
-    
-    /* Mobile responsiveness for huge title */
-    @media (max-width: 768px) {
-        .intro-title { font-size: 8rem; letter-spacing: -4px; }
-        .intro-title.zoom-fade { transform: scale(3) translateY(-30px); }
-        .intro-overlay { padding: 1rem; }
-    }
-    
-    @media (max-width: 480px) {
-        .intro-title { font-size: 5rem; letter-spacing: -2px; }
-        .intro-title.zoom-fade { transform: scale(2.5) translateY(-20px); }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -275,45 +183,6 @@ def render_message(role, content):
             {content}
         </div>
         """, unsafe_allow_html=True)
-
-def render_startup_intro():
-    """Render the dramatic zoom-in fade-out intro animation"""
-    st.markdown("""
-    <div class="intro-overlay" id="introOverlay">
-        <div class="intro-title" id="introTitle">SuperLaw</div>
-    </div>
-    
-    <script>
-    // This script handles the animation logic
-    function startIntroAnimation() {
-        const overlay = document.getElementById('introOverlay');
-        const title = document.getElementById('introTitle');
-        
-        if (!overlay || !title) return;
-        
-        // Phase 1: Title appears and grows (1.5 seconds)
-        setTimeout(() => {
-            title.classList.add('grow');
-        }, 300);
-        
-        // Phase 2: Title zooms in dramatically and fades out (1 second) 
-        setTimeout(() => {
-            title.classList.add('zoom-fade');
-        }, 1800);
-        
-        // Phase 3: Hide overlay (0.5 seconds)
-        setTimeout(() => {
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 500); // Wait for the fade-out transition
-        }, 2300);
-    }
-    
-    // Start animation when page loads
-    startIntroAnimation();
-    </script>
-    """, unsafe_allow_html=True)
 
 def render_title_corner():
     """Render the title and subtitle in the corner after animation"""

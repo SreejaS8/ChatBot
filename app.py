@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from datetime import datetime, timedelta
 from groq import Groq
-from ui import apply_custom_css, render_message, render_startup_intro, render_title_corner
+from ui import apply_custom_css, render_message, render_title_corner
 import json
 import time
 
@@ -113,9 +113,6 @@ def get_ai_response(prompt_messages):
 def main():
     # Initialize session state
     initialize_session()
-    
-    # Show dramatic startup intro animation
-    render_startup_intro()
     
     # Render the fixed title
     render_title_corner()
