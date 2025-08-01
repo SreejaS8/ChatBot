@@ -1,168 +1,343 @@
 import streamlit as st
-import base64
-
-def get_base64_image(image_path):
-    try:
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    except Exception:
-        return None
 
 def apply_custom_css():
-    bg_image = get_base64_image("./assets/background.jpg") or get_base64_image("./assets/background.png")
-
-    # Use .webp for crisp modern background support too
-    background_style = f"""
-        background-image: url("data:image/jpeg;base64,{bg_image}");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    """ if bg_image else """
-        background: linear-gradient(120deg, #0f2027 0%, #2c5364 100%);
-    """
-
-    st.markdown(f"""
+    """Apply stunning custom CSS to transform the Streamlit app"""
+    st.markdown("""
     <style>
-    html, body, .stApp {{
-        min-height: 100vh;
-        {background_style}
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-    }}
+    /* Hide Streamlit branding and menu */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(45deg, #f093fb, #f5576c);
+    }
 
-    .stApp::before {{
+    /* Main app styling */
+    .stApp {
+        background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%);
+        background-attachment: fixed;
+    }
+
+    /* Animated background particles */
+    .stApp::before {
         content: '';
         position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        background: rgba(0,0,0, 0.65);
-        z-index: -2;
-        pointer-events: none;
-    }}
-
-    .chat-container {{
-        height: calc(100vh - 140px);
-        overflow-y: auto;
-        padding: 28px 0 36px 0;
-        margin-bottom: 90px;
-        scroll-behavior: smooth;
-    }}
-
-    .message {{
-        padding: 16px 24px;
-        margin: 20px 0 0 0;
-        border-radius: 22px;
-        animation: floatUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.13);
-        font-size: 17px;
-        box-shadow: 0 6px 24px rgba(0,0,0,0.28);
-        max-width: 80%;
-        transition: background 0.25s, color 0.25s;
-        line-height: 1.6;
-        word-break: break-word;
-        display: flex;
-        flex-direction: column;
-    }}
-
-    .user-message {{
-        align-items: flex-end;
-        background: linear-gradient(135deg, rgba(41, 120, 255, 0.88) 0%, rgba(100,185,255,0.81) 100%);
-        color: #fff;
-        margin-left: auto;
-        box-shadow: 0 8px 24px 2px rgba(30,118,210,0.09);
-        border-bottom-right-radius: 6px;
-    }}
-
-    .bot-message {{
-        align-items: flex-start;
-        background: rgba(255,255,255,0.10);
-        color: #fff;
-        margin-right: auto;
-        border-bottom-left-radius: 6px;
-        box-shadow: 0 12px 30px 2px rgba(44,83,130,0.08);
-    }}
-
-    .sender {{
-        font-weight: bold;
-        font-size: 15px;
-        margin-bottom: 3px;
-        letter-spacing: 0.02em;
-        opacity: 0.75;
-    }}
-
-    .stTextInput input {{
-        background: rgba(255,255,255,0.11) !important;
-        color: white !important;
-        border-radius: 30px !important;
-        padding: 12px 20px;
-        border: 1.5px solid rgba(140,185,255,0.25);
-        font-size: 16px;
-        transition: border 0.2s;
-        box-shadow: 0 2px 8px -1px rgba(44,153,255,0.08);
-    }}
-
-    .stTextInput input:focus {{
-        border: 2px solid #299af4 !important;
-        box-shadow: 0 2px 16px -3px rgba(44,153,255,0.15);
-        outline: none !important;
-    }}
-
-    .stButton button {{
-        background: linear-gradient(to right,#299af4, #6eb6fa);
-        color: #fff;
-        border: none;
-        border-radius: 22px;
-        padding: 10px 26px;
-        font-weight: 600;
-        margin-top: 8px;
-        font-size: 16px;
-        box-shadow: 0 2px 8px rgba(44,153,255,0.16);
-        transition: background 0.2s;
-    }}
-
-    .stButton button:hover {{
-        background: linear-gradient(90deg,#5acafe, #299af4);
-    }}
-
-    .input-bar {{
-        position: fixed;
-        bottom: 24px;
-        left: 50%;
-        transform: translateX(-50%);
+        top: 0;
+        left: 0;
         width: 100%;
-        max-width: 760px;
-        padding: 0 14px;
-        z-index: 12;
-        background: rgba(15,32,39,0.92);
-        border-radius: 16px;
-        box-shadow: 0 5px 32px rgba(20,40,90,0.13);
-    }}
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+        animation: float 20s ease-in-out infinite;
+        pointer-events: none;
+        z-index: -1;
+    }
 
-    #MainMenu, footer, header, .stDeployButton {{
-        visibility: hidden;
-    }}
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        33% { transform: translateY(-20px) rotate(1deg); }
+        66% { transform: translateY(20px) rotate(-1deg); }
+    }
 
-    @keyframes floatUp {{
-        0% {{ transform: translateY(30px); opacity: 0; }}
-        97% {{ opacity: 1; }}
-        100% {{ transform: translateY(0); opacity: 1; }}
-    }}
+    /* SuperLaw Title Animation */
+    .super-title {
+        font-size: 4rem;
+        font-weight: 800;
+        text-align: center;
+        margin: 2rem 0;
+        background: linear-gradient(
+            45deg,
+            #667eea,
+            #764ba2,
+            #f093fb,
+            #f5576c,
+            #4facfe,
+            #00f2fe
+        );
+        background-size: 400% 400%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientShift 3s ease infinite, breathe 4s ease-in-out infinite;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        letter-spacing: -2px;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes breathe {
+        0%, 100% { transform: scale(1) translateY(0px); }
+        50% { transform: scale(1.05) translateY(-5px); }
+    }
+
+    /* Chat container */
+    .chat-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        max-height: 500px;
+        overflow-y: auto;
+        position: relative;
+    }
+
+    /* Message bubbles */
+    .user-message {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 20px 20px 5px 20px;
+        margin: 1rem 0;
+        margin-left: 20%;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        animation: slideInRight 0.3s ease-out;
+        position: relative;
+        word-wrap: break-word;
+    }
+
+    .bot-message {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: #0a0a0a;
+        padding: 1rem 1.5rem;
+        border-radius: 20px 20px 20px 5px;
+        margin: 1rem 0;
+        margin-right: 20%;
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        animation: slideInLeft 0.3s ease-out;
+        position: relative;
+        word-wrap: break-word;
+        font-weight: 500;
+    }
+
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-50px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Input styling */
+    .stTextInput > div > div > input {
+        background: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 25px !important;
+        color: white !important;
+        padding: 15px 20px !important;
+        font-size: 1.1rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .stTextInput > div > div > input:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.4) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    .stTextInput > div > div > input::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    /* Button styling */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 25px !important;
+        padding: 15px 30px !important;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5) !important;
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+    }
+
+    /* Form container */
+    .input-bar {
+        position: sticky;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px);
+        padding: 1.5rem;
+        border-radius: 20px 20px 0 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 2rem;
+    }
+
+    /* Loading animation */
+    .loading-dots {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+    .loading-dots div {
+        position: absolute;
+        top: 33px;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #667eea;
+        animation-timing-function: cubic-bezier(0, 1, 1, 0);
+    }
+
+    .loading-dots div:nth-child(1) {
+        left: 8px;
+        animation: loading1 0.6s infinite;
+    }
+
+    .loading-dots div:nth-child(2) {
+        left: 8px;
+        animation: loading2 0.6s infinite;
+    }
+
+    .loading-dots div:nth-child(3) {
+        left: 32px;
+        animation: loading2 0.6s infinite;
+    }
+
+    .loading-dots div:nth-child(4) {
+        left: 56px;
+        animation: loading3 0.6s infinite;
+    }
+
+    @keyframes loading1 {
+        0% { transform: scale(0); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes loading3 {
+        0% { transform: scale(1); }
+        100% { transform: scale(0); }
+    }
+
+    @keyframes loading2 {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(24px, 0); }
+    }
+
+    /* Sidebar styling */
+    .css-1d391kg {
+        background: rgba(0, 0, 0, 0.8) !important;
+        backdrop-filter: blur(20px) !important;
+    }
+
+    /* Success/Error messages */
+    .stSuccess {
+        background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%) !important;
+        border-radius: 15px !important;
+        animation: fadeInScale 0.5s ease-out !important;
+    }
+
+    .stError {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%) !important;
+        border-radius: 15px !important;
+        animation: shake 0.5s ease-out !important;
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.8); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shake {
+        0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .super-title {
+            font-size: 2.5rem;
+        }
+        
+        .user-message, .bot-message {
+            margin-left: 5%;
+            margin-right: 5%;
+            border-radius: 15px;
+        }
+        
+        .chat-container {
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+    }
     </style>
     """, unsafe_allow_html=True)
 
-def render_message(sender, message):
-    """Enhanced message presentation: role above bubble, subtle color, emoji icon, word-wrap."""
-    emoji = "🧑‍💻" if sender == "You" else "🤖"
-    role_class = "user-message" if sender == "You" else "bot-message"
-    st.markdown(
-        f'''
-        <div class="message {role_class}">
-            <span class="sender">{emoji} {sender}</span>
-            {message}
+def render_message(role, content):
+    """Render a message with beautiful styling"""
+    if role == "You":
+        st.markdown(f"""
+        <div class="user-message">
+            <strong>You:</strong><br>
+            {content}
         </div>
-        ''',
-        unsafe_allow_html=True
-    )
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown(f"""
+        <div class="bot-message">
+            <strong>SuperLaw AI:</strong><br>
+            {content}
+        </div>
+        """, unsafe_allow_html=True)
+
+def show_typing_indicator():
+    """Show a typing indicator while AI is responding"""
+    st.markdown("""
+    <div class="bot-message">
+        <strong>SuperLaw AI is thinking...</strong><br>
+        <div class="loading-dots">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+def render_title():
+    """Render the animated SuperLaw title"""
+    st.markdown("""
+    <div class="super-title">
+        SuperLaw AI
+    </div>
+    <div style="text-align: center; color: rgba(255,255,255,0.7); font-size: 1.2rem; margin-bottom: 2rem;">
+        Your Intelligent Legal Assistant
+    </div>
+    """, unsafe_allow_html=True)

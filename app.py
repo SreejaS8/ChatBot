@@ -2,127 +2,211 @@ import streamlit as st
 import os
 from datetime import datetime, timedelta
 from groq import Groq
-from ui import apply_custom_css, render_message
+from ui import apply_custom_css, render_message, show_typing_indicator, render_title
 import json
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
+import time
+# from pydrive2.auth import GoogleAuth
+# from pydrive2.drive import GoogleDrive
 
 # ===== SET THE DRIVE FOLDER ID HERE =====
-DRIVE_LOG_FOLDER_ID = st.secrets["DRIVE_LOG_FOLDER_ID"]
+# DRIVE_LOG_FOLDER_ID = st.secrets.get("DRIVE_LOG_FOLDER_ID", "")
 
 # --- Page Setup ---
-st.set_page_config(page_title="Groq Chatbot", layout="centered")
+st.set_page_config(
+    page_title="SuperLaw AI - Legal Assistant", 
+    page_icon="⚖️",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
+# Apply stunning CSS
 apply_custom_css()
 
-# --- Configure Google Drive Auth ---
-def gdrive_authenticate():
-    gauth = GoogleAuth()
-    gauth.LocalWebserverAuth()  # Use for local testing
-    return GoogleDrive(gauth)
+# --- Configure Google Drive Auth (Optional - uncomment if needed) ---
+# def gdrive_authenticate():
+#     gauth = GoogleAuth()
+#     gauth.LocalWebserverAuth()
+#     return GoogleDrive(gauth)
 
-def upload_log_to_drive(local_path, drive_folder_id):
-    drive = gdrive_authenticate()
-    file_drive = drive.CreateFile({'title': os.path.basename(local_path),
-                                   'parents': [{'id': drive_folder_id}]})
-    file_drive.SetContentFile(local_path)
-    file_drive.Upload()
+# def upload_log_to_drive(local_path, drive_folder_id):
+#     if not drive_folder_id:
+#         return
+#     try:
+#         drive = gdrive_authenticate()
+#         file_drive = drive.CreateFile({'title': os.path.basename(local_path),
+#                                        'parents': [{'id': drive_folder_id}]})
+#         file_drive.SetContentFile(local_path)
+#         file_drive.Upload()
+#         st.success("✅ Log uploaded to Google Drive!")
+#     except Exception as e:
+#         st.error(f"❌ Failed to upload to Drive: {str(e)}")
 
-# --- Log and Upload Function ---
-def log_and_upload(role, content, drive_folder_id):
+# --- Log Function ---
+def log_message(role, content):
+    """Log messages to local file"""
     folder = "chat_logs"
     os.makedirs(folder, exist_ok=True)
     date_str = datetime.now().strftime('%Y-%m-%d')
     log_path = os.path.join(folder, f"chatlog_{date_str}.jsonl")
+    
     log_entry = {
         "timestamp": datetime.now().isoformat(),
         "role": role,
-        "content": content
+        "content": content,
+        "session_id": st.session_state.get('session_id', 'unknown')
     }
-    with open(log_path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_entry) + "\n")
-    # Optionally, upload each time or on a schedule/batch
-    upload_log_to_drive(log_path, drive_folder_id)
+    
+    try:
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry) + "\n")
+    except Exception as e:
+        st.error(f"Logging error: {str(e)}")
 
 # --- Load API Key ---
 try:
-    os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
-    client = Groq(api_key=os.environ["GROQ_API_KEY"])
-except Exception:
-    st.error("🔐 API Key not found.")
+    # Try to get from secrets first, then environment
+    api_key = st.secrets.get("GROQ_API_KEY") or os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("API key not found")
+    
+    client = Groq(api_key=api_key)
+    
+except Exception as e:
+    st.error("🔐 **Groq API Key not found!**")
+    st.info("Please add your GROQ_API_KEY to Streamlit secrets or environment variables.")
     st.stop()
 
-# --- Logging Setup ---
-def get_log_filename():
-    folder = "chat_logs"
-    os.makedirs(folder, exist_ok=True)
-    # Use the date when the session started for log filename
-    date_str = st.session_state.start_time.strftime("%Y-%m-%d")
-    return os.path.join(folder, f"chatlog_{date_str}.jsonl")
-
-def log_message(role, content):
-    log_entry = {
-        "timestamp": datetime.now().isoformat(),
-        "role": role,
-        "content": content
-    }
-    with open(get_log_filename(), "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_entry) + "\n")
-
-# --- Initialize Session Memory ---
-if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "system", "content": "You are a helpful assistant."}]
-    st.session_state.start_time = datetime.now()
-    st.session_state.last_saved_log_date = st.session_state.start_time.date()
-
-# --- Memory and Log Cleanup after 24hrs ---
-if "start_time" in st.session_state:
-    if datetime.now() - st.session_state.start_time > timedelta(hours=24):
-        # Reset chat history and update start_time
-        st.session_state.messages = [{"role": "system", "content": "You are a helpful assistant."}]
+# --- Initialize Session State ---
+def initialize_session():
+    """Initialize session state variables"""
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {"role": "system", "content": "You are SuperLaw AI, a highly knowledgeable and helpful legal assistant. Provide accurate, clear, and professional legal information while always reminding users to consult with qualified attorneys for specific legal advice."}
+        ]
+    
+    if "start_time" not in st.session_state:
         st.session_state.start_time = datetime.now()
-        st.session_state.last_saved_log_date = st.session_state.start_time.date()
+    
+    if "session_id" not in st.session_state:
+        st.session_state.session_id = f"session_{int(time.time())}"
+    
+    if "is_processing" not in st.session_state:
+        st.session_state.is_processing = False
 
-# --- Function to Get Response from Groq ---
-def ask_groq():
+# --- Memory Cleanup (24-hour reset) ---
+def check_session_reset():
+    """Reset session after 24 hours"""
+    if "start_time" in st.session_state:
+        if datetime.now() - st.session_state.start_time > timedelta(hours=24):
+            st.session_state.messages = [
+                {"role": "system", "content": "You are SuperLaw AI, a highly knowledgeable and helpful legal assistant. Provide accurate, clear, and professional legal information while always reminding users to consult with qualified attorneys for specific legal advice."}
+            ]
+            st.session_state.start_time = datetime.now()
+            st.session_state.session_id = f"session_{int(time.time())}"
+            st.success("🔄 Session refreshed after 24 hours")
+
+# --- Get AI Response ---
+def get_ai_response():
+    """Get response from Groq AI"""
     try:
-        response = client.chat.completions.create(
-            model="llama3-8b-8192",
-            messages=st.session_state.messages
-        )
-        return response.choices[0].message.content
+        with st.spinner("🤖 SuperLaw AI is thinking..."):
+            response = client.chat.completions.create(
+                model="llama3-8b-8192",
+                messages=st.session_state.messages,
+                temperature=0.7,
+                max_tokens=1024,
+                top_p=1,
+                stream=False
+            )
+            return response.choices[0].message.content
     except Exception as e:
-        return f"⚠️ Error: {str(e)}"
+        return f"⚠️ **Error**: I encountered an issue: {str(e)}\n\nPlease try again in a moment."
 
-# --- Display Chat UI ---
+# --- Main App ---
 def main():
-    # Scrollable chat area
+    # Initialize session
+    initialize_session()
+    check_session_reset()
+    
+    # Render beautiful title
+    render_title()
+    
+    # Sidebar info
+    with st.sidebar:
+        st.markdown("### 📊 Session Info")
+        st.info(f"**Session:** {st.session_state.session_id[:12]}...")
+        st.info(f"**Started:** {st.session_state.start_time.strftime('%H:%M:%S')}")
+        st.info(f"**Messages:** {len(st.session_state.messages) - 1}")
+        
+        if st.button("🔄 Reset Chat"):
+            st.session_state.messages = [st.session_state.messages[0]]  # Keep system message
+            st.rerun()
+        
+        st.markdown("---")
+        st.markdown("### ⚖️ About SuperLaw AI")
+        st.markdown("""
+        Your intelligent legal assistant powered by advanced AI. 
+        
+        **Features:**
+        - 🧠 Advanced legal knowledge
+        - 📝 Document analysis
+        - 🔍 Case law research
+        - ⚡ Instant responses
+        
+        **Disclaimer:** Always consult qualified attorneys for legal advice.
+        """)
+    
+    # Chat container
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-    for msg in st.session_state.messages[1:]:
-        role = "You" if msg["role"] == "user" else "Bot"
+    
+    # Display chat messages
+    for msg in st.session_state.messages[1:]:  # Skip system message
+        role = "You" if msg["role"] == "user" else "SuperLaw AI"
         render_message(role, msg["content"])
+    
     st.markdown('</div>', unsafe_allow_html=True)
-
-    # Sticky input bar
+    
+    # Input form
     st.markdown('<div class="input-bar">', unsafe_allow_html=True)
+    
     with st.form("chat_form", clear_on_submit=True):
-        user_input = st.text_input("You:", placeholder="Type your message...")
-        submitted = st.form_submit_button("Send")
+        col1, col2 = st.columns([4, 1])
+        
+        with col1:
+            user_input = st.text_input(
+                "Ask SuperLaw AI anything about law...",
+                placeholder="Type your legal question here...",
+                key="user_input",
+                label_visibility="collapsed"
+            )
+        
+        with col2:
+            submitted = st.form_submit_button(
+                "Send 🚀",
+                use_container_width=True,
+                disabled=st.session_state.is_processing
+            )
+    
     st.markdown('</div>', unsafe_allow_html=True)
-
-    if submitted and user_input:
-        # Log user message (locally and to drive)
+    
+    # Process user input
+    if submitted and user_input and not st.session_state.is_processing:
+        st.session_state.is_processing = True
+        
+        # Add user message
         st.session_state.messages.append({"role": "user", "content": user_input})
         log_message("user", user_input)
-        log_and_upload("user", user_input, DRIVE_LOG_FOLDER_ID)
-
-        # Get bot reply and log it (locally and to drive)
-        bot_reply = ask_groq()
-        st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-        log_message("assistant", bot_reply)
-        log_and_upload("assistant", bot_reply, DRIVE_LOG_FOLDER_ID)
-
+        
+        # Get AI response
+        ai_response = get_ai_response()
+        
+        # Add AI response
+        st.session_state.messages.append({"role": "assistant", "content": ai_response})
+        log_message("assistant", ai_response)
+        
+        st.session_state.is_processing = False
         st.rerun()
 
-# --- Run ---
+# --- Run the app ---
 if __name__ == "__main__":
     main()
