@@ -9,40 +9,48 @@ def apply_custom_css():
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Hide main content initially for startup animation */
+    /* Hide main Streamlit content initially for startup animation */
     .main .block-container {
         opacity: 0;
-        animation: mainContentFadeIn 0.8s ease-out 5s both;
+        animation: mainContentFadeIn 0.6s ease-out 3.5s both;
     }
     
     @keyframes mainContentFadeIn {
         from { opacity: 0; }
         to { opacity: 1; }
     }
+
+    /* Main app styling with cream and blue theme */
+    .stApp {
+        background: radial-gradient(ellipse at top, #F9E9D6 0%, #f0e1ca 40%, #e8d9be 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+    }
     
-    /* Custom scrollbar */
+    /* Custom scrollbar with blue theme */
     ::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
     }
     ::-webkit-scrollbar-track {
-        background: #1a1a1a;
-        border-radius: 10px;
+        background: rgba(249, 233, 214, 0.3);
+        border-radius: 8px;
     }
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        border-radius: 10px;
+        background: #0700C5;
+        border-radius: 8px;
     }
     ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(45deg, #f093fb, #f5576c);
+        background: rgba(7, 0, 197, 0.8);
     }
 
-    /* Main app styling */
+    /* Main app styling with cream and blue theme */
     .stApp {
-        background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%);
+        background: radial-gradient(ellipse at top, #F9E9D6 0%, #f0e1ca 40%, #e8d9be 100%);
         background-attachment: fixed;
+        min-height: 100vh;
     }
 
-    /* Animated background particles */
+    /* Animated background with cream tones */
     .stApp::before {
         content: '';
         position: fixed;
@@ -51,18 +59,18 @@ def apply_custom_css():
         width: 100%;
         height: 100%;
         background-image: 
-            radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
-        animation: float 20s ease-in-out infinite;
+            radial-gradient(circle at 20% 50%, rgba(7, 0, 197, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(249, 233, 214, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 40% 80%, rgba(7, 0, 197, 0.03) 0%, transparent 50%);
+        animation: float 25s ease-in-out infinite;
         pointer-events: none;
         z-index: -1;
     }
 
     @keyframes float {
         0%, 100% { transform: translateY(0px) rotate(0deg); }
-        33% { transform: translateY(-20px) rotate(1deg); }
-        66% { transform: translateY(20px) rotate(-1deg); }
+        33% { transform: translateY(-15px) rotate(0.5deg); }
+        66% { transform: translateY(15px) rotate(-0.5deg); }
     }
 
     /* SuperLaw Title Animation */
@@ -116,32 +124,33 @@ def apply_custom_css():
         position: relative;
     }
 
-    /* Message bubbles */
+    /* Message bubbles with blue and cream theme */
     .user-message {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: #0700C5;
+        color: #F9E9D6;
         padding: 1rem 1.5rem;
-        border-radius: 20px 20px 5px 20px;
+        border-radius: 18px 18px 4px 18px;
         margin: 1rem 0;
         margin-left: 20%;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        animation: slideInRight 0.3s ease-out;
+        box-shadow: 0 4px 12px rgba(7, 0, 197, 0.25);
+        animation: slideInRight 0.4s ease-out;
         position: relative;
         word-wrap: break-word;
     }
 
     .bot-message {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        color: #0a0a0a;
+        background: #F9E9D6;
+        color: #0700C5;
         padding: 1rem 1.5rem;
-        border-radius: 20px 20px 20px 5px;
+        border-radius: 18px 18px 18px 4px;
         margin: 1rem 0;
         margin-right: 20%;
-        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-        animation: slideInLeft 0.3s ease-out;
+        box-shadow: 0 4px 12px rgba(249, 233, 214, 0.4);
+        animation: slideInLeft 0.4s ease-out;
         position: relative;
         word-wrap: break-word;
         font-weight: 500;
+        border: 1px solid rgba(7, 0, 197, 0.1);
     }
 
     @keyframes slideInRight {
@@ -154,47 +163,47 @@ def apply_custom_css():
         to { opacity: 1; transform: translateX(0); }
     }
 
-    /* Input styling */
+    /* Input styling with blue and cream theme */
     .stTextInput > div > div > input {
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(249, 233, 214, 0.9) !important;
         backdrop-filter: blur(10px) !important;
-        border: 2px solid rgba(255, 255, 255, 0.2) !important;
-        border-radius: 25px !important;
-        color: white !important;
+        border: 2px solid rgba(7, 0, 197, 0.2) !important;
+        border-radius: 20px !important;
+        color: #0700C5 !important;
         padding: 15px 20px !important;
         font-size: 1.1rem !important;
         transition: all 0.3s ease !important;
     }
 
     .stTextInput > div > div > input:focus {
-        border-color: #667eea !important;
-        box-shadow: 0 0 20px rgba(102, 126, 234, 0.4) !important;
-        transform: translateY(-2px) !important;
+        border-color: #0700C5 !important;
+        box-shadow: 0 0 15px rgba(7, 0, 197, 0.3) !important;
+        transform: translateY(-1px) !important;
     }
 
     .stTextInput > div > div > input::placeholder {
-        color: rgba(255, 255, 255, 0.6) !important;
+        color: rgba(7, 0, 197, 0.6) !important;
     }
 
-    /* Button styling */
+    /* Button styling with blue theme */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-        color: white !important;
+        background: #0700C5 !important;
+        color: #F9E9D6 !important;
         border: none !important;
-        border-radius: 25px !important;
-        padding: 15px 30px !important;
+        border-radius: 20px !important;
+        padding: 15px 25px !important;
         font-size: 1.1rem !important;
         font-weight: 600 !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+        box-shadow: 0 4px 12px rgba(7, 0, 197, 0.3) !important;
         text-transform: uppercase !important;
-        letter-spacing: 1px !important;
+        letter-spacing: 0.5px !important;
     }
 
     .stButton > button:hover {
-        transform: translateY(-3px) !important;
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5) !important;
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 18px rgba(7, 0, 197, 0.4) !important;
+        background: rgba(7, 0, 197, 0.9) !important;
     }
 
     /* Form container */
@@ -347,7 +356,7 @@ def render_startup_intro():
     st.markdown("""
     <div class="startup-overlay" id="startupOverlay">
         <div class="startup-title" id="startupTitle">
-            SuperLaw
+            Superlaw
         </div>
     </div>
     
@@ -359,21 +368,21 @@ def render_startup_intro():
         
         if (!overlay || !title) return;
         
-        // Phase 1: Title breathes in center (3 seconds)
+        // Phase 1: Title slowly pops in and breathes (2 seconds)
         setTimeout(() => {
             title.classList.add('fly-to-corner');
-        }, 3000);
+        }, 2000);
         
-        // Phase 2: Title flies to top-left (1.5 seconds)
+        // Phase 2: Title flies to top-left (1 second)
         setTimeout(() => {
             overlay.classList.add('fade-out');
-        }, 4500);
+        }, 3000);
         
         // Phase 3: Hide overlay and show main content (0.5 seconds)
         setTimeout(() => {
             overlay.style.display = 'none';
             document.querySelector('.main-content').classList.add('breathe-in');
-        }, 5000);
+        }, 3500);
     }
     
     // Start animation when page loads
@@ -392,12 +401,12 @@ def render_startup_intro():
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%);
+        background: radial-gradient(ellipse at center, #F9E9D6 0%, #e6d5b8 30%, #d4c19a 100%);
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 9999;
-        transition: opacity 0.8s ease-out;
+        transition: opacity 0.6s ease-out;
     }
     
     .startup-overlay.fade-out {
@@ -405,32 +414,35 @@ def render_startup_intro():
         pointer-events: none;
     }
     
-    /* Startup title - center screen, breathing */
+    /* Startup title - center screen, slow pop in */
     .startup-title {
-        font-size: 6rem;
-        font-weight: 900;
-        background: linear-gradient(
-            45deg,
-            #667eea,
-            #764ba2,
-            #f093fb,
-            #f5576c,
-            #4facfe,
-            #00f2fe,
-            #667eea
-        );
-        background-size: 400% 400%;
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: 
-            gradientShift 3s ease infinite,
-            breatheIntro 2s ease-in-out infinite;
-        text-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
-        letter-spacing: -3px;
+        font-size: 5rem;
+        font-weight: 700;
+        color: #0700C5;
         text-align: center;
-        transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        letter-spacing: -2px;
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+        animation: slowPopIn 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
+        text-shadow: 0 4px 20px rgba(7, 0, 197, 0.15);
+        transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         transform-origin: center center;
+    }
+    
+    /* Slow pop-in animation */
+    @keyframes slowPopIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.8) translateY(30px);
+        }
+        60% {
+            opacity: 0.8;
+            transform: scale(1.05) translateY(-5px);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
     }
     
     /* Flying animation to top-left */
@@ -438,86 +450,70 @@ def render_startup_intro():
         position: fixed;
         top: 2rem;
         left: 2rem;
-        font-size: 2.5rem;
-        transform: scale(0.7);
+        font-size: 2rem;
+        transform: scale(0.8);
+        opacity: 0.9;
         animation: none;
         z-index: 10000;
-    }
-    
-    /* Breathing animation for intro */
-    @keyframes breatheIntro {
-        0%, 100% { 
-            transform: scale(1) translateY(0px);
-            filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3));
-        }
-        50% { 
-            transform: scale(1.08) translateY(-8px);
-            filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.6));
-        }
+        transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
     /* Main content breathing in */
     .main-content {
         opacity: 0;
-        transform: translateY(30px) scale(0.95);
-        transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform: translateY(20px);
+        transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
     .main-content.breathe-in {
         opacity: 1;
-        transform: translateY(0) scale(1);
-        animation: contentBreatheIn 0.8s ease-out;
+        transform: translateY(0);
+        animation: contentSlideIn 0.6s ease-out;
     }
     
-    @keyframes contentBreatheIn {
+    @keyframes contentSlideIn {
         0% {
             opacity: 0;
-            transform: translateY(40px) scale(0.9);
-        }
-        60% {
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(30px);
         }
         100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
     }
     
     /* Hide main Streamlit content initially */
     .main .block-container {
-        transition: all 0.5s ease-out;
+        transition: all 0.4s ease-out;
     }
     
     /* Enhanced chat container breathing effect */
     .chat-container {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
+        background: rgba(249, 233, 214, 0.08);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(249, 233, 214, 0.15);
+        border-radius: 16px;
         padding: 2rem;
         margin: 2rem 0;
         box-shadow: 
-            0 8px 32px rgba(0, 0, 0, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            0 8px 24px rgba(7, 0, 197, 0.08),
+            inset 0 1px 0 rgba(249, 233, 214, 0.1);
         max-height: 500px;
         overflow-y: auto;
         position: relative;
-        transform: translateY(20px);
+        transform: translateY(15px);
         opacity: 0;
-        animation: chatBoxBreatheIn 1s ease-out 5.2s both;
+        animation: chatBoxSlideIn 0.8s ease-out 3.7s both;
     }
     
-    @keyframes chatBoxBreatheIn {
+    @keyframes chatBoxSlideIn {
         0% {
             opacity: 0;
-            transform: translateY(40px) scale(0.95);
-        }
-        50% {
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(25px);
         }
         100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
     }
     
@@ -525,24 +521,21 @@ def render_startup_intro():
     .input-bar {
         position: sticky;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(20px);
+        background: rgba(7, 0, 197, 0.85);
+        backdrop-filter: blur(15px);
         padding: 1.5rem;
-        border-radius: 20px 20px 0 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px 16px 0 0;
+        border-top: 1px solid rgba(249, 233, 214, 0.2);
         margin-top: 2rem;
-        transform: translateY(30px);
+        transform: translateY(20px);
         opacity: 0;
-        animation: inputBarBreatheIn 1s ease-out 5.5s both;
+        animation: inputBarSlideIn 0.8s ease-out 4s both;
     }
     
-    @keyframes inputBarBreatheIn {
+    @keyframes inputBarSlideIn {
         0% {
             opacity: 0;
-            transform: translateY(50px);
-        }
-        70% {
-            transform: translateY(-5px);
+            transform: translateY(30px);
         }
         100% {
             opacity: 1;
@@ -553,12 +546,12 @@ def render_startup_intro():
     /* Mobile responsiveness for startup */
     @media (max-width: 768px) {
         .startup-title {
-            font-size: 3.5rem;
+            font-size: 3rem;
             letter-spacing: -1px;
         }
         
         .startup-title.fly-to-corner {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             top: 1rem;
             left: 1rem;
         }
