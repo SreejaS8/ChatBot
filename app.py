@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from datetime import datetime, timedelta
 from groq import Groq
-from ui import apply_custom_css, render_message, show_typing_indicator, render_title
+from ui import apply_custom_css, render_message, show_typing_indicator, render_startup_intro, render_title_corner
 import json
 import time
 # from pydrive2.auth import GoogleAuth
@@ -128,8 +128,14 @@ def main():
     initialize_session()
     check_session_reset()
     
-    # Render beautiful title
-    render_title()
+    # Show startup intro animation
+    render_startup_intro()
+    
+    # Wrap main content for animation
+    st.markdown('<div class="main-content">', unsafe_allow_html=True)
+    
+    # Render title in corner after animation
+    render_title_corner()
     
     # Sidebar info
     with st.sidebar:
@@ -206,6 +212,9 @@ def main():
         
         st.session_state.is_processing = False
         st.rerun()
+    
+    # Close main content wrapper
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Run the app ---
 if __name__ == "__main__":

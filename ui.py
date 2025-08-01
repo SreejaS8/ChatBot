@@ -9,6 +9,17 @@ def apply_custom_css():
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
+    /* Hide main content initially for startup animation */
+    .main .block-container {
+        opacity: 0;
+        animation: mainContentFadeIn 0.8s ease-out 5s both;
+    }
+    
+    @keyframes mainContentFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
     /* Custom scrollbar */
     ::-webkit-scrollbar {
         width: 8px;
@@ -331,13 +342,236 @@ def show_typing_indicator():
     </div>
     """, unsafe_allow_html=True)
 
-def render_title():
-    """Render the animated SuperLaw title"""
+def render_startup_intro():
+    """Render the startup intro animation"""
     st.markdown("""
-    <div class="super-title">
-        SuperLaw AI
+    <div class="startup-overlay" id="startupOverlay">
+        <div class="startup-title" id="startupTitle">
+            SuperLaw
+        </div>
     </div>
-    <div style="text-align: center; color: rgba(255,255,255,0.7); font-size: 1.2rem; margin-bottom: 2rem;">
-        Your Intelligent Legal Assistant
+    
+    <script>
+    // Startup animation sequence
+    function startupAnimation() {
+        const overlay = document.getElementById('startupOverlay');
+        const title = document.getElementById('startupTitle');
+        
+        if (!overlay || !title) return;
+        
+        // Phase 1: Title breathes in center (3 seconds)
+        setTimeout(() => {
+            title.classList.add('fly-to-corner');
+        }, 3000);
+        
+        // Phase 2: Title flies to top-left (1.5 seconds)
+        setTimeout(() => {
+            overlay.classList.add('fade-out');
+        }, 4500);
+        
+        // Phase 3: Hide overlay and show main content (0.5 seconds)
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            document.querySelector('.main-content').classList.add('breathe-in');
+        }, 5000);
+    }
+    
+    // Start animation when page loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startupAnimation);
+    } else {
+        startupAnimation();
+    }
+    </script>
+    
+    <style>
+    /* Startup overlay - covers entire screen */
+    .startup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.8s ease-out;
+    }
+    
+    .startup-overlay.fade-out {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    /* Startup title - center screen, breathing */
+    .startup-title {
+        font-size: 6rem;
+        font-weight: 900;
+        background: linear-gradient(
+            45deg,
+            #667eea,
+            #764ba2,
+            #f093fb,
+            #f5576c,
+            #4facfe,
+            #00f2fe,
+            #667eea
+        );
+        background-size: 400% 400%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: 
+            gradientShift 3s ease infinite,
+            breatheIntro 2s ease-in-out infinite;
+        text-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+        letter-spacing: -3px;
+        text-align: center;
+        transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform-origin: center center;
+    }
+    
+    /* Flying animation to top-left */
+    .startup-title.fly-to-corner {
+        position: fixed;
+        top: 2rem;
+        left: 2rem;
+        font-size: 2.5rem;
+        transform: scale(0.7);
+        animation: none;
+        z-index: 10000;
+    }
+    
+    /* Breathing animation for intro */
+    @keyframes breatheIntro {
+        0%, 100% { 
+            transform: scale(1) translateY(0px);
+            filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3));
+        }
+        50% { 
+            transform: scale(1.08) translateY(-8px);
+            filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.6));
+        }
+    }
+    
+    /* Main content breathing in */
+    .main-content {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .main-content.breathe-in {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        animation: contentBreatheIn 0.8s ease-out;
+    }
+    
+    @keyframes contentBreatheIn {
+        0% {
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+        }
+        60% {
+            transform: translateY(-5px) scale(1.02);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    /* Hide main Streamlit content initially */
+    .main .block-container {
+        transition: all 0.5s ease-out;
+    }
+    
+    /* Enhanced chat container breathing effect */
+    .chat-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 2rem 0;
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        max-height: 500px;
+        overflow-y: auto;
+        position: relative;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: chatBoxBreatheIn 1s ease-out 5.2s both;
+    }
+    
+    @keyframes chatBoxBreatheIn {
+        0% {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+        }
+        50% {
+            transform: translateY(-5px) scale(1.02);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    /* Input bar breathing in */
+    .input-bar {
+        position: sticky;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px);
+        padding: 1.5rem;
+        border-radius: 20px 20px 0 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 2rem;
+        transform: translateY(30px);
+        opacity: 0;
+        animation: inputBarBreatheIn 1s ease-out 5.5s both;
+    }
+    
+    @keyframes inputBarBreatheIn {
+        0% {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        70% {
+            transform: translateY(-5px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Mobile responsiveness for startup */
+    @media (max-width: 768px) {
+        .startup-title {
+            font-size: 3.5rem;
+            letter-spacing: -1px;
+        }
+        
+        .startup-title.fly-to-corner {
+            font-size: 1.8rem;
+            top: 1rem;
+            left: 1rem;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+def render_title_corner():
+    """Render the title in corner after animation"""
+    st.markdown("""
+    <div style="margin-bottom: 2rem;">
+        <div style="text-align: center; color: rgba(255,255,255,0.7); font-size: 1.2rem;">
+            Your Intelligent Legal Assistant
+        </div>
     </div>
     """, unsafe_allow_html=True)
