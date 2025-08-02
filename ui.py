@@ -2,23 +2,23 @@ import streamlit as st
 
 def apply_custom_css():
     """
-    Applies custom CSS for a clean, animated chat interface.
-    This includes a cream and blue color theme, animated backgrounds,
-    and stylized message bubbles, and a fixed footer for the chat input.
+    Applies custom CSS for a clean and attractive UI.
+    This includes the color theme, fonts, and fixed footer styling.
     """
     st.markdown("""
     <style>
-    /* Hide Streamlit branding and menu */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Hide Streamlit branding, footer, and header */
+    #MainMenu, footer, header {
+        visibility: hidden;
+    }
 
-    /* Main app styling with cream and blue theme */
+    /* Main app styling with a light, professional theme */
     .stApp {
         background: radial-gradient(ellipse at top, #F9E9D6 0%, #f0e1ca 40%, #e8d9be 100%);
         background-attachment: fixed;
         min-height: 100vh;
         padding-bottom: 80px; /* Space for the fixed footer */
+        font-family: 'Arial', sans-serif;
     }
 
     /* Custom scrollbar */
@@ -34,61 +34,25 @@ def apply_custom_css():
         border-radius: 8px;
     }
 
-    /* Animated background bubbles */
-    .stApp::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image:
-            radial-gradient(circle at 20% 50%, rgba(7, 0, 197, 0.05) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(249, 233, 214, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 40% 80%, rgba(7, 0, 197, 0.03) 0%, transparent 50%);
-        animation: float 25s ease-in-out infinite;
-        pointer-events: none;
-        z-index: -1;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        33% { transform: translateY(-15px) rotate(0.5deg); }
-        66% { transform: translateY(15px) rotate(-0.5deg); }
-    }
-    
-    /* Intro container */
-    .intro-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background: linear-gradient(135deg, #F9E9D6 0%, #e6d5b8 50%, #d4c19a 100%);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .intro-title {
-        font-size: 8rem;
-        font-weight: 800;
+    /* --- Title Styling --- */
+    .app-title {
+        text-align: center;
         color: #0700C5;
-        text-shadow: 0 8px 40px rgba(7, 0, 197, 0.3);
-        line-height: 0.8;
-        animation: pop-in 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        opacity: 0;
+        font-size: 3rem;
+        font-weight: 800;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 8px rgba(7, 0, 197, 0.15);
+    }
+    .app-subtitle {
+        text-align: center;
+        color: rgba(7, 0, 197, 0.7);
+        font-size: 1.2rem;
+        font-weight: 500;
+        margin-bottom: 3rem;
     }
 
-    @keyframes pop-in {
-        0% { transform: scale(0.5); opacity: 0; }
-        80% { transform: scale(1.1); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    /* Fixed footer for the chat input */
+    /* --- Fixed Footer for Input --- */
     .fixed-bottom {
         position: fixed;
         bottom: 0;
@@ -100,8 +64,8 @@ def apply_custom_css():
         box-shadow: 0 -4px 12px rgba(7, 0, 197, 0.1);
         z-index: 1000;
     }
-    
-    /* Message bubbles */
+
+    /* --- Chat Messages Styling --- */
     .user-message {
         background: #0700C5;
         color: #F9E9D6;
@@ -110,10 +74,8 @@ def apply_custom_css():
         margin: 1rem 0;
         margin-left: 20%;
         box-shadow: 0 4px 12px rgba(7, 0, 197, 0.25);
-        animation: slideInRight 0.4s ease-out;
         word-wrap: break-word;
     }
-
     .bot-message {
         background: #F9E9D6;
         color: #0700C5;
@@ -122,23 +84,12 @@ def apply_custom_css():
         margin: 1rem 0;
         margin-right: 20%;
         box-shadow: 0 4px 12px rgba(249, 233, 214, 0.4);
-        animation: slideInLeft 0.4s ease-out;
         word-wrap: break-word;
         font-weight: 500;
         border: 1px solid rgba(7, 0, 197, 0.1);
     }
 
-    @keyframes slideInRight {
-        from { opacity: 0; transform: translateX(50px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes slideInLeft {
-        from { opacity: 0; transform: translateX(-50px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-
-    /* Input styling */
+    /* --- Input and Button Styling --- */
     .stTextInput > div > div > input {
         background: rgba(249, 233, 214, 0.9) !important;
         backdrop-filter: blur(10px) !important;
@@ -149,18 +100,6 @@ def apply_custom_css():
         font-size: 1.1rem !important;
         transition: all 0.3s ease !important;
     }
-
-    .stTextInput > div > div > input:focus {
-        border-color: #0700C5 !important;
-        box-shadow: 0 0 15px rgba(7, 0, 197, 0.3) !important;
-        transform: translateY(-1px) !important;
-    }
-
-    .stTextInput > div > div > input::placeholder {
-        color: rgba(7, 0, 197, 0.6) !important;
-    }
-
-    /* Button styling */
     .stButton > button {
         background: #0700C5 !important;
         color: #F9E9D6 !important;
@@ -169,42 +108,16 @@ def apply_custom_css():
         padding: 15px 25px !important;
         font-size: 1.1rem !important;
         font-weight: 600 !important;
-        transition: all 0.3s ease !important;
         box-shadow: 0 4px 12px rgba(7, 0, 197, 0.3) !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
     }
 
-    .stButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 18px rgba(7, 0, 197, 0.4) !important;
-        background: rgba(7, 0, 197, 0.9) !important;
-    }
-
-    /* Chat container */
-    .chat-container {
-        background: rgba(249, 233, 214, 0.08);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(249, 233, 214, 0.15);
-        border-radius: 16px;
-        padding: 2rem;
-        margin: 2rem auto;
-        max-width: 800px;
-        box-shadow: 0 8px 24px rgba(7, 0, 197, 0.08);
-    }
-    
-    /* Mobile responsiveness */
-    @media (max-width: 768px) {
-        .stApp { padding: 1rem; }
-        .user-message, .bot-message { margin-left: 5%; margin-right: 5%; }
-        .chat-container { padding: 1rem; margin: 1rem auto; }
-    }
     </style>
     """, unsafe_allow_html=True)
 
 def render_message(role, content):
     """Render a message with beautiful styling"""
-    if role == "You":
+    if role == "user":
         st.markdown(f"""
         <div class="user-message">
             <strong>You:</strong><br>
@@ -219,25 +132,7 @@ def render_message(role, content):
         </div>
         """, unsafe_allow_html=True)
 
-def render_startup_intro():
-    """
-    Renders the dramatic intro screen with a title and a button.
-    This function is controlled by Streamlit's session state.
-    """
-    st.markdown('<div class="intro-container">', unsafe_allow_html=True)
-    st.markdown('<h1 class="intro-title">SuperLaw</h1>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-
 def render_title_area():
     """Render the title and subtitle at the top of the page"""
-    st.markdown("""
-    <div style="text-align: center; margin: 2rem 0 3rem 0;">
-        <h1 style="color: #0700C5; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">
-            SuperLaw
-        </h1>
-        <p style="color: rgba(7, 0, 197, 0.7); font-size: 1.2rem; font-weight: 500;">
-            🏛️ Your Intelligent Legal Assistant
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<h1 class="app-title">SuperLaw ⚖️</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="app-subtitle">Your Intelligent Legal Assistant</p>', unsafe_allow_html=True)
