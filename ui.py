@@ -66,6 +66,7 @@ def apply_custom_css():
         height: 100vh;
         background: linear-gradient(135deg, #F9E9D6 0%, #e6d5b8 50%, #d4c19a 100%);
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         z-index: 9999;
@@ -231,7 +232,10 @@ def render_message(role, content):
         """, unsafe_allow_html=True)
 
 def render_startup_intro():
-    """Render the dramatic zoom-in fade-out intro animation"""
+    """
+    Renders the dramatic zoom-in fade-out intro animation
+    and a button to enter the app.
+    """
     st.markdown("""
     <div class="intro-overlay" id="introOverlay">
         <div class="intro-title" id="introTitle">SuperLaw</div>
@@ -254,14 +258,6 @@ def render_startup_intro():
         setTimeout(() => {
             title.classList.add('zoom-fade');
         }, 1800);
-        
-        // Phase 3: Hide overlay (0.5 seconds)
-        setTimeout(() => {
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 500); // Wait for the fade-out transition
-        }, 2300);
     }
     
     // Start animation when page loads
@@ -279,19 +275,5 @@ def render_title_area():
         <p style="color: rgba(7, 0, 197, 0.7); font-size: 1.2rem; font-weight: 500;">
             🏛️ Your Intelligent Legal Assistant
         </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-def show_typing_indicator():
-    """Show a typing indicator while AI is responding"""
-    st.markdown("""
-    <div class="bot-message">
-        <strong>SuperLaw AI is thinking...</strong><br>
-        <div class="loading-dots">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
     </div>
     """, unsafe_allow_html=True)
