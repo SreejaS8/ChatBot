@@ -21,6 +21,10 @@ apply_custom_css()
 if "show_intro" not in st.session_state:
     st.session_state.show_intro = True
 
+def hide_intro():
+    """Callback function to hide the intro screen"""
+    st.session_state.show_intro = False
+
 # --- Placeholder for Google Drive Logging ---
 def log_to_google_drive(folder_id, data):
     """
@@ -108,9 +112,7 @@ def main():
         # Show intro animation and a button to proceed
         render_startup_intro()
         st.markdown('<div class="fixed-bottom">', unsafe_allow_html=True)
-        if st.button("Enter App", use_container_width=True):
-            st.session_state.show_intro = False
-            st.rerun()
+        st.button("Enter App", on_click=hide_intro, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     else:
         # Main application logic

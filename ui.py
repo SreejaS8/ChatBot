@@ -57,12 +57,12 @@ def apply_custom_css():
         66% { transform: translateY(15px) rotate(-0.5deg); }
     }
     
-    /* Intro overlay - full screen dramatic background */
-    .intro-overlay {
-        position: fixed;
+    /* Intro container */
+    .intro-container {
+        position: absolute;
         top: 0;
         left: 0;
-        width: 100vw;
+        width: 100%;
         height: 100vh;
         background: linear-gradient(135deg, #F9E9D6 0%, #e6d5b8 50%, #d4c19a 100%);
         display: flex;
@@ -70,34 +70,22 @@ def apply_custom_css():
         justify-content: center;
         align-items: center;
         z-index: 9999;
-        transition: opacity 0.5s ease-in-out;
     }
-    
-    /* Intro title - huge and dramatic */
+
     .intro-title {
-        font-size: 15rem;
+        font-size: 8rem;
         font-weight: 800;
         color: #0700C5;
-        text-align: center;
-        letter-spacing: -8px;
-        opacity: 0;
-        transform: scale(0.3);
-        transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         text-shadow: 0 8px 40px rgba(7, 0, 197, 0.3);
         line-height: 0.8;
-    }
-    
-    /* Title pops in and grows */
-    .intro-title.grow {
-        opacity: 1;
-        transform: scale(1);
-    }
-    
-    /* Title zooms in dramatically and fades out */
-    .intro-title.zoom-fade {
+        animation: pop-in 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         opacity: 0;
-        transform: scale(4) translateY(-50px);
-        transition: all 0.8s ease-in;
+    }
+
+    @keyframes pop-in {
+        0% { transform: scale(0.5); opacity: 0; }
+        80% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
     }
 
     /* Fixed footer for the chat input */
@@ -112,7 +100,7 @@ def apply_custom_css():
         box-shadow: 0 -4px 12px rgba(7, 0, 197, 0.1);
         z-index: 1000;
     }
-
+    
     /* Message bubbles */
     .user-message {
         background: #0700C5;
@@ -233,37 +221,13 @@ def render_message(role, content):
 
 def render_startup_intro():
     """
-    Renders the dramatic zoom-in fade-out intro animation
-    and a button to enter the app.
+    Renders the dramatic intro screen with a title and a button.
+    This function is controlled by Streamlit's session state.
     """
-    st.markdown("""
-    <div class="intro-overlay" id="introOverlay">
-        <div class="intro-title" id="introTitle">SuperLaw</div>
-    </div>
+    st.markdown('<div class="intro-container">', unsafe_allow_html=True)
+    st.markdown('<h1 class="intro-title">SuperLaw</h1>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    <script>
-    // This script handles the animation logic
-    function startIntroAnimation() {
-        const overlay = document.getElementById('introOverlay');
-        const title = document.getElementById('introTitle');
-        
-        if (!overlay || !title) return;
-        
-        // Phase 1: Title appears and grows (1.5 seconds)
-        setTimeout(() => {
-            title.classList.add('grow');
-        }, 300);
-        
-        // Phase 2: Title zooms in dramatically and fades out (1 second) 
-        setTimeout(() => {
-            title.classList.add('zoom-fade');
-        }, 1800);
-    }
-    
-    // Start animation when page loads
-    startIntroAnimation();
-    </script>
-    """, unsafe_allow_html=True)
 
 def render_title_area():
     """Render the title and subtitle at the top of the page"""
