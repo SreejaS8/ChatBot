@@ -4,7 +4,7 @@ import time
 # --- Page Config ---
 st.set_page_config(
     page_title="SuperLaw - Legal Assistant",
-    page_icon="⚖️",
+    page_icon=" ",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -29,12 +29,12 @@ st.markdown("""
         font-size: 15px;
     }
     .user-message {
-        background-color: DFD0B8; /* soft light blue */
+        background-color: #DFD0B8; 
         border: 1px solid #b3d1ff;
         align-self: flex-end;
     }
     .bot-message {
-        background-color: 948979; /* light cream */
+        background-color: #948979; /* light cream */
         border-left: 4px solid #c49a6c; /* gold accent */
     }
     .fixed-bottom {
