@@ -3,7 +3,7 @@ import time
 
 # --- Page Config ---
 st.set_page_config(
-    page_title="SuperLaw - Legal Assistant",
+    page_title="Superaw",
     page_icon=" ",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -64,13 +64,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Title ---
-st.title("SuperLaw - Your Legal Assistant")
+st.title("Superlaw - Your Legal Assistant")
 st.write("Ask your legal questions and get responses like an advocate.")
 
 # --- Session State ---
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Hello! I am SuperLaw, your legal assistant. How can I assist you today?"}
+        {"role": "assistant", "content": "Hello! I am Superlaw, your legal assistant. How can I assist you today?"}
     ]
 
 # --- Chat Display ---
@@ -101,7 +101,7 @@ if submitted and user_input:
     st.session_state.messages.append({"role": "user", "content": user_input})
     
     # Bot "advocate" style reply
-    with st.spinner('SuperLaw is reviewing your case...'):
+    with st.spinner('Superlaw is reviewing your case...'):
         time.sleep(1.5)
         response = (
             f"Based on the details you’ve provided, here is my preliminary legal opinion:\n\n"
