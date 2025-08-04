@@ -1,11 +1,7 @@
 import streamlit as st
 import time
-from datetime import datetime, timedelta
-from ui import apply_custom_css, render_message, render_title_area
 
-# --- Main App Logic ---
-
-# Set Streamlit page configuration
+# --- Page Config ---
 st.set_page_config(
     page_title="SuperLaw - Legal Assistant",
     page_icon="⚖️",
@@ -13,50 +9,94 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Apply the custom CSS
-apply_custom_css()
+# --- Custom CSS for Simple, Clean UI ---
+st.markdown("""
+    <style>
+    body {
+        background-color: #f9f9f9;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .chat-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+    }
+    .message {
+        padding: 10px 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        line-height: 1.5;
+    }
+    .user-message {
+        background-color: #d1e7ff;
+        align-self: flex-end;
+    }
+    .bot-message {
+        background-color: #f0f0f0;
+        border-left: 4px solid #0056b3;
+    }
+    .fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+    }
+    input, button {
+        font-size: 16px !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-# Render the title area
-render_title_area()
+# --- Title ---
+st.title("⚖️ SuperLaw - Your Legal Assistant")
+st.write("Ask your legal questions and get responses like an advocate.")
 
-# Initialize chat session state
+# --- Session State ---
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Hello! I am SuperLaw, your legal assistant. How can I help you today?"}
+        {"role": "assistant", "content": "Hello! I am SuperLaw, your legal assistant. How can I assist you today?"}
     ]
 
-# Display chat messages
+# --- Chat Display ---
+st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 for msg in st.session_state.messages:
-    render_message(msg["role"], msg["content"])
+    role_class = "user-message" if msg["role"] == "user" else "bot-message"
+    st.markdown(f'<div class="message {role_class}">{msg["content"]}</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
-# Input area fixed at the bottom
+# --- Input ---
 st.markdown('<div class="fixed-bottom">', unsafe_allow_html=True)
 with st.form("chat_form", clear_on_submit=True):
     col1, col2 = st.columns([4, 1])
-    
     with col1:
         user_input = st.text_input(
-            "Ask SuperLaw AI anything about law...",
+            "Ask a legal question...",
             placeholder="Type your legal question here...",
             key="user_input",
             label_visibility="collapsed"
         )
-    
     with col2:
         submitted = st.form_submit_button("Send 🚀", use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Handle user input and generate a response
+# --- Handle Input ---
 if submitted and user_input:
-    # Add user message to chat history
+    # User message
     st.session_state.messages.append({"role": "user", "content": user_input})
     
-    # Simulate a bot response for this simple example
-    with st.spinner('SuperLaw AI is thinking...'):
-        time.sleep(2)  # Simulate API call delay
-        
-    # Add the bot's response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": f"You said: {user_input}"})
+    # Bot "advocate" style reply
+    with st.spinner('SuperLaw is reviewing your case...'):
+        time.sleep(1.5)
+        response = (
+            f"Based on the details you’ve provided, here is my preliminary legal opinion:\n\n"
+            f"1. **Understanding Your Query:** {user_input}\n"
+            "2. **Applicable Law:** This would depend on the jurisdiction and the specific facts of your case.\n"
+            "3. **Suggested Next Steps:** Consider gathering all relevant documents and consulting with a licensed attorney for a formal review.\n\n"
+            "Please note: This response is for informational purposes only and does not constitute legal advice."
+        )
     
-    # Rerun the app to update the display with the new messages
+    st.session_state.messages.append({"role": "assistant", "content": response})
     st.rerun()

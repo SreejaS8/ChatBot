@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Superlaw UI</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #000; /* No white flash */
+        height: 100%;
+        overflow: hidden;
+        font-family: sans-serif;
+    }
+
+    /* Background image element */
+    .background-img {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 100%;
+        max-height: 100%;
+        opacity: 0;
+        animation: fadeIn 1.2s ease forwards;
+        transition: filter 1.5s ease;
+        z-index: -1; /* Behind everything */
+    }
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+    .blur-strong { filter: blur(10px); }
+    .blur-soft { filter: blur(4px); }
+
+    /* Title */
+    .title-container {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+    .title {
+        font-size: 5rem;
+        color: #fff;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    @keyframes popIn {
+        to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes popOut {
+        to { opacity: 0; transform: scale(0.8); }
+    }
+
+    /* Chat footer */
+    .chat-footer {
+        position: fixed;
+        bottom: -100px;
+        left: 0;
+        width: 100%;
+        background: rgba(30, 30, 30, 0.85);
+        backdrop-filter: blur(6px);
+        padding: 10px 20px;
+        box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        opacity: 0;
+        transition: bottom 0.5s ease, opacity 0.5s ease;
+        z-index: 10;
+    }
+    .chat-footer.visible {
+        bottom: 0;
+        opacity: 1;
+    }
+    .chat-input {
+        width: 70%;
+        padding: 10px;
+        border: none;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-size: 1rem;
+        outline: none;
+    }
+    .chat-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        background: #fff;
+        color: #000;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        outline: none;
+    }
+    .chat-button:hover {
+        background: #e0e0e0;
+    }
+</style>
+</head>
+<body>
+    <!-- Background Image -->
+    <img src="assets/another.jpg" alt="Background" class="background-img" id="bg">
+
+    <!-- Title -->
+    <div class="title-container">
+        <h1 class="title" id="title">Superlaw.</h1>
+    </div>
+
+    <!-- Chat -->
+    <div class="chat-footer" id="chat">
+        <input type="text" class="chat-input" placeholder="Ask Superlaw a question...">
+        <button class="chat-button">Send</button>
+    </div>
+
+<script>
+    const bg = document.getElementById('bg');
+    const title = document.getElementById('title');
+    const chat = document.getElementById('chat');
+
+    const titlePopInDuration = 1000;
+    const titleVisibleDuration = 1000;
+    const titlePopOutDuration = 1200; // Cinematic outro
+
+    // Step 1: Title pops in after image fade-in
+    setTimeout(() => {
+        title.style.animation = `popIn ${titlePopInDuration/1000}s ease-out forwards`;
+    }, 1200);
+
+    // Step 2: Title pops out + strong blur
+    setTimeout(() => {
+        title.style.animation = `popOut ${titlePopOutDuration/1000}s ease-in forwards`;
+        bg.classList.add('blur-strong');
+    }, 1200 + titlePopInDuration + titleVisibleDuration);
+
+    // Step 3: Soften blur + show chat
+    setTimeout(() => {
+        bg.classList.remove('blur-strong');
+        bg.classList.add('blur-soft');
+        chat.classList.add('visible');
+    }, 1200 + titlePopInDuration + titleVisibleDuration + titlePopOutDuration);
+</script>
+</body>
+</html>
