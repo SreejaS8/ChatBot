@@ -9,11 +9,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- Custom CSS for Simple, Clean UI ---
+# --- Custom CSS for Elegant Law-Themed UI ---
 st.markdown("""
     <style>
     body {
-        background-color: #f9f9f9;
+        background-color: #fdfcf7; /* soft parchment-like background */
         font-family: 'Segoe UI', sans-serif;
     }
     .chat-container {
@@ -22,30 +22,43 @@ st.markdown("""
         padding: 20px;
     }
     .message {
-        padding: 10px 15px;
+        padding: 12px 16px;
         border-radius: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         line-height: 1.5;
+        font-size: 15px;
     }
     .user-message {
-        background-color: #d1e7ff;
+        background-color: #e8f0ff; /* soft light blue */
+        border: 1px solid #b3d1ff;
         align-self: flex-end;
     }
     .bot-message {
-        background-color: #f0f0f0;
-        border-left: 4px solid #0056b3;
+        background-color: #fff9f0; /* light cream */
+        border-left: 4px solid #c49a6c; /* gold accent */
     }
     .fixed-bottom {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        background-color: white;
-        padding: 10px;
-        border-top: 1px solid #ddd;
+        background-color: #ffffff;
+        padding: 12px 20px;
+        border-top: 2px solid #c49a6c; /* gold line */
     }
     input, button {
         font-size: 16px !important;
+    }
+    .stButton>button {
+        background-color: #c49a6c; /* gold */
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 16px;
+    }
+    .stButton>button:hover {
+        background-color: #a57f54; /* darker gold on hover */
+        color: white;
     }
     </style>
 """, unsafe_allow_html=True)
