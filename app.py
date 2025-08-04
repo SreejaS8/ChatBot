@@ -29,7 +29,7 @@ st.markdown("""
         font-size: 15px;
     }
     .user-message {
-        background-color: #DFD0B8; 
+        background-color: #393E46; 
         border: 1px solid #b3d1ff;
         align-self: flex-end;
     }
