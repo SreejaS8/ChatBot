@@ -29,12 +29,12 @@ st.markdown("""
         font-size: 15px;
     }
     .user-message {
-        background-color: #e8f0ff; /* soft light blue */
+        background-color: #000080; /* soft light blue */
         border: 1px solid #b3d1ff;
         align-self: flex-end;
     }
     .bot-message {
-        background-color: #fff9f0; /* light cream */
+        background-color: #EB5406; /* light cream */
         border-left: 4px solid #c49a6c; /* gold accent */
     }
     .fixed-bottom {
