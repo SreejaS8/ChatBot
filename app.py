@@ -29,12 +29,12 @@ st.markdown("""
         font-size: 15px;
     }
     .user-message {
-        background-color: #000080; /* soft light blue */
+        background-color: DFD0B8; /* soft light blue */
         border: 1px solid #b3d1ff;
         align-self: flex-end;
     }
     .bot-message {
-        background-color: #EB5406; /* light cream */
+        background-color: 948979; /* light cream */
         border-left: 4px solid #c49a6c; /* gold accent */
     }
     .fixed-bottom {
@@ -64,7 +64,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Title ---
-st.title("⚖️ SuperLaw - Your Legal Assistant")
+st.title("SuperLaw - Your Legal Assistant")
 st.write("Ask your legal questions and get responses like an advocate.")
 
 # --- Session State ---
@@ -92,7 +92,7 @@ with st.form("chat_form", clear_on_submit=True):
             label_visibility="collapsed"
         )
     with col2:
-        submitted = st.form_submit_button("Send 🚀", use_container_width=True)
+        submitted = st.form_submit_button("Send", use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Handle Input ---
